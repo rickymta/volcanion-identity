@@ -34,8 +34,8 @@ services:
 
   volcanion-identity:
     build:
-      context: src/presentation/Volcanion_Identity_Presentation
-      dockerfile: Dockerfile
+      context: Volcanion_Identity_Presentation/
+      dockerfile: DockerfileIn
     container_name: volcanion-identity
     ports:
       - "5000:443"
