@@ -5,16 +5,16 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /source
 
 # Copy the csproj file and restore the packages
-COPY src/presentation/Volcanion_Identity_Handlers/Volcanion_Identity_Handlers.csproj /Volcanion_Identity_Handlers/Volcanion_Identity_Handlers.csproj
-COPY src/presentation/Volcanion_Identity_Infrastructure/Volcanion_Identity_Infrastructure.csproj /Volcanion_Identity_Infrastructure/Volcanion_Identity_Infrastructure.csproj
-COPY src/presentation/Volcanion_Identity_Models/Volcanion_Identity_Models.csproj /Volcanion_Identity_Models/Volcanion_Identity_Models.csproj
-COPY src/presentation/Volcanion_Identity_Services/Volcanion_Identity_Services.csproj /Volcanion_Identity_Services/Volcanion_Identity_Services.csproj
-COPY src/presentation/Volcanion_Identity_Presentation/Volcanion_Identity_Presentation.csproj /Volcanion_Identity_Presentation/Volcanion_Identity_Presentation.csproj
-RUN dotnet restore "./Volcanion_Identity_Presentation/Volcanion_Identity_Presentation.csproj"
+COPY src/presentation/Volcanion_Identity_Handlers/*.csproj /Volcanion_Identity_Handlers/
+COPY src/presentation/Volcanion_Identity_Infrastructure/*.csproj /Volcanion_Identity_Infrastructure/
+COPY src/presentation/Volcanion_Identity_Models/*.csproj /Volcanion_Identity_Models/
+COPY src/presentation/Volcanion_Identity_Services/*.csproj /Volcanion_Identity_Services/
+COPY src/presentation/Volcanion_Identity_Presentation/*.csproj /Volcanion_Identity_Presentation/
+RUN dotnet restore ./Volcanion_Identity_Presentation/Volcanion_Identity_Presentation.csproj
 
 # Copy the source code and build the application
 COPY src/ .
-RUN dotnet publish "./Volcanion_Identity_Presentation/Volcanion_Identity_Presentation.csproj" -c Release -o /publish
+RUN dotnet publish ./Volcanion_Identity_Presentation/Volcanion_Identity_Presentation.csproj -c Release -o /publish
 
 # Use the runtime image to run the application
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
