@@ -7,6 +7,7 @@ using Volcanion_Core_Common.Providers;
 using Volcanion_Core_Models.Response;
 using Volcanion_Core_Presentation.Middlewares;
 using Volcanion_Identity_Infrastructure;
+using Volcanion_Identity_Infrastructure.Middlewares;
 using Volcanion_Identity_Handlers;
 using Volcanion_Identity_Models.Context;
 using Volcanion_Identity_Models.MappingProfiles;

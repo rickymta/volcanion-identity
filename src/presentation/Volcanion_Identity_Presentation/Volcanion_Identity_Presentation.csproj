@@ -25,18 +25,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\core\Volcanion_Core_Common\Volcanion_Core_Common.csproj" />
-    <ProjectReference Include="..\..\core\Volcanion_Core_Infrastructure\Volcanion_Core_Infrastructure.csproj" />
-    <ProjectReference Include="..\..\core\Volcanion_Core_Models\Volcanion_Core_Models.csproj" />
-    <ProjectReference Include="..\..\core\Volcanion_Core_Presentation\Volcanion_Core_Presentation.csproj" />
-    <ProjectReference Include="..\Volcanion_Identity_Handlers\Volcanion_Identity_Handlers.csproj" />
-    <ProjectReference Include="..\Volcanion_Identity_Infrastructure\Volcanion_Identity_Infrastructure.csproj" />
-    <ProjectReference Include="..\Volcanion_Identity_Models\Volcanion_Identity_Models.csproj" />
-    <ProjectReference Include="..\Volcanion_Identity_Services\Volcanion_Identity_Services.csproj" />
+    <Folder Include="Secrets\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Secrets\" />
+    <ProjectReference Include="..\..\core\Volcanion_Identity_Handlers\Volcanion_Identity_Handlers.csproj" />
+    <ProjectReference Include="..\..\core\Volcanion_Identity_Infrastructure\Volcanion_Identity_Infrastructure.csproj" />
+    <ProjectReference Include="..\..\core\Volcanion_Identity_Models\Volcanion_Identity_Models.csproj" />
+    <ProjectReference Include="..\..\core\Volcanion_Identity_Services\Volcanion_Identity_Services.csproj" />
   </ItemGroup>
 
 </Project>
