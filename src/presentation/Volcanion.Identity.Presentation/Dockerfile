@@ -5,12 +5,12 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /source
 
 # Copy the csproj file and restore the packages
-COPY /src/presentation/Volcanion.Identity.Handlers/*.csproj ./Volcanion.Identity.Handlers/
-COPY /src/presentation/Volcanion.Identity.Infrastructure/*.csproj ./Volcanion.Identity.Infrastructure/
-COPY /src/presentation/Volcanion.Identity.Models/*.csproj ./Volcanion.Identity.Models/
-COPY /src/presentation/Volcanion.Identity.Services/*.csproj ./Volcanion.Identity.Services/
-COPY /src/presentation/Volcanion.Identity.Presentation/*.csproj ./Volcanion.Identity.Presentation
-RUN dotnet restore
+COPY src/presentation/Volcanion.Identity.Handlers/Volcanion.Identity.Handlers.csproj /Volcanion.Identity.Handlers/Volcanion.Identity.Handlers.csproj
+COPY src/presentation/Volcanion.Identity.Infrastructure/Volcanion.Identity.Handlers.csproj /Volcanion.Identity.Infrastructure/Volcanion.Identity.Infrastructure.csproj
+COPY src/presentation/Volcanion.Identity.Models/Volcanion.Identity.Models.csproj /Volcanion.Identity.Models/Volcanion.Identity.Models.csproj
+COPY src/presentation/Volcanion.Identity.Services/Volcanion.Identity.Services.csproj /Volcanion.Identity.Services/Volcanion.Identity.Services.csproj
+COPY src/presentation/Volcanion.Identity.Presentation/Volcanion.Identity.Presentation.csproj /Volcanion.Identity.Presentation/Volcanion.Identity.Presentation.csproj
+RUN dotnet restore ./Volcanion.Identity.Presentation/Volcanion.Identity.Presentation.csproj
 
 # Copy the source code and build the application
 COPY . .
