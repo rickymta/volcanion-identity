@@ -16,7 +16,6 @@ public class Account : BaseEntity
     /// <summary>
     /// Email
     /// </summary>
-    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public string Email { get; set; } = null!;
 
     /// <summary>

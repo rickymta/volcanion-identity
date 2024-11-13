@@ -77,6 +77,7 @@ public class HashProvider : IHashProvider
         }
 
         RSA rsa = RSA.Create();
+        privateKeyFile = AppContext.BaseDirectory + "\\Secrets\\" + privateKeyFile;
         rsa.ImportFromPem(File.ReadAllText(privateKeyFile));
         byte[] signedHash = rsa.SignHash(hashBytes, HashAlgorithmName.SHA512, RSASignaturePadding.Pkcs1);
         return Convert.ToBase64String(signedHash);
@@ -88,6 +89,7 @@ public class HashProvider : IHashProvider
         var signedHash = Convert.FromBase64String(dataCompare);
         // Get the public key from the file or string
         RSA rsa = RSA.Create();
+        publicKeyFile = AppContext.BaseDirectory + "\\Secrets\\" + publicKeyFile;
         rsa.ImportFromPem(File.ReadAllText(publicKeyFile));
 
         // Hash the data again with SHA512

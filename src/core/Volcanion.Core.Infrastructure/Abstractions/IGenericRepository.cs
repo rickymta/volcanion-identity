@@ -13,14 +13,14 @@ public interface IGenericRepository<T> where T : BaseEntity
     /// </summary>
     /// <param name="entity"></param>
     /// <returns></returns>
-    Task<string> CreateAsync(T entity);
+    Task<Guid> CreateAsync(T entity);
 
     /// <summary>
     /// GetAsync
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<T?> GetAsync(string id);
+    Task<T?> GetAsync(Guid id);
 
     /// <summary>
     /// GetAllAsync
@@ -40,5 +40,5 @@ public interface IGenericRepository<T> where T : BaseEntity
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<bool> DeleteAsync(string id);
+    Task<bool> DeleteAsync(Guid id);
 }

@@ -1,11 +1,11 @@
 ﻿using Volcanion.Core.Models.Entities;
 
-namespace Volcanion.Core.ServiceHandler.Abstractions;
+namespace Volcanion.Core.Services.Abstractions;
 
 /// <summary>
 /// IBaseService
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">Entity</typeparam>
 public interface IBaseService<T> where T : BaseEntity
 {
     /// <summary>
@@ -13,14 +13,14 @@ public interface IBaseService<T> where T : BaseEntity
     /// </summary>
     /// <param name="entity"></param>
     /// <returns></returns>
-    Task<string> CreateAsync(T entity);
+    Task<Guid> CreateAsync(T entity);
 
     /// <summary>
     /// GetAsync
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<T?> GetAsync(string id);
+    Task<T?> GetAsync(Guid id);
 
     /// <summary>
     /// GetAllAsync
@@ -40,5 +40,5 @@ public interface IBaseService<T> where T : BaseEntity
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<bool> DeleteAsync(string id);
+    Task<bool> DeleteAsync(Guid id);
 }

@@ -87,4 +87,14 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasForeignKey(gp => gp.AccountId);
         });
     }
+
+    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    //{
+    //    if (!optionsBuilder.IsConfigured)
+    //    {
+    //        optionsBuilder.UseMySql(
+    //            "YourConnectionString",
+    //            b => b.MigrationsAssembly("Volcanion.Identity.Presentation")); // Tên assembly chứa migration
+    //    }
+    //}
 }

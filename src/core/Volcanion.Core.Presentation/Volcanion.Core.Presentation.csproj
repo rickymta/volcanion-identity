@@ -17,11 +17,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\presentation\Volcanion.Identity.Infrastructure\Volcanion.Identity.Infrastructure.csproj" />
+	  <ProjectReference Include="..\..\presentation\Volcanion.Identity.Models\Volcanion.Identity.Models.csproj" />
 	  <ProjectReference Include="..\Volcanion.Core.Models\Volcanion.Core.Models.csproj" />
 	</ItemGroup>
 

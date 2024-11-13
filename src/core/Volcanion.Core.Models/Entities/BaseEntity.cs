@@ -8,7 +8,7 @@ public class BaseEntity
     /// <summary>
     /// GUID
     /// </summary>
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; }
 
     /// <summary>
     /// IsActived

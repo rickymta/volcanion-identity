@@ -115,5 +115,5 @@ public class RoleAccess
     /// Roles
     /// </summary>
     [JsonPropertyName("roles")]
-    public List<string> Roles { get; set; } = new();
+    public List<string> Roles { get; set; } = [];
 }

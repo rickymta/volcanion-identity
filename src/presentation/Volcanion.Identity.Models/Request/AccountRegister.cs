@@ -6,9 +6,9 @@
 public class AccountRegister
 {
     /// <summary>
-    /// LoginName
+    /// Email
     /// </summary>
-    public string LoginName { get; set; } = null!;
+    public string Email { get; set; } = null!;
 
     /// <summary>
     /// Password
@@ -19,11 +19,6 @@ public class AccountRegister
     /// Fullname
     /// </summary>
     public string Fullname { get; set; } = null!;
-
-    /// <summary>
-    /// Email
-    /// </summary>
-    public string Email { get; set; } = null!;
 
     /// <summary>
     /// PhoneNumber
@@ -44,4 +39,9 @@ public class AccountRegister
     /// IpAddress
     /// </summary>
     public string IpAddress { get; set; } = null!;
+
+    /// <summary>
+    /// Issuer
+    /// </summary>
+    public string Issuer { get; set; } = null!;
 }

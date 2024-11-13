@@ -1,10 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using Volcanion.Core.Infrastructure.Abstractions;
 using Volcanion.Core.Models.Entities;
-using Volcanion.Core.ServiceHandler.Abstractions;
+using Volcanion.Core.Services.Abstractions;
 
-namespace Volcanion.Core.ServiceHandler.Implementations;
+namespace Volcanion.Core.Services.Implementations;
 
+/// <inheritdoc/>
 public class BaseService<T, TRepository> : IBaseService<T>
     where T : BaseEntity
     where TRepository : IGenericRepository<T>
@@ -31,7 +32,7 @@ public class BaseService<T, TRepository> : IBaseService<T>
     }
 
     /// <inheritdoc/>
-    public async Task<string> CreateAsync(T entity)
+    public async Task<Guid> CreateAsync(T entity)
     {
         try
         {
@@ -46,7 +47,7 @@ public class BaseService<T, TRepository> : IBaseService<T>
     }
 
     /// <inheritdoc/>
-    public async Task<bool> DeleteAsync(string id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
         try
         {
@@ -76,7 +77,7 @@ public class BaseService<T, TRepository> : IBaseService<T>
     }
 
     /// <inheritdoc/>
-    public async Task<T?> GetAsync(string id)
+    public async Task<T?> GetAsync(Guid id)
     {
         try
         {

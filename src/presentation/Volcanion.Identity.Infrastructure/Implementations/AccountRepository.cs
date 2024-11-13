@@ -7,25 +7,22 @@ using Volcanion.Identity.Models.Entities;
 
 namespace Volcanion.Identity.Infrastructure.Implementations;
 
+/// <inheritdoc/>
 internal class AccountRepository : BaseRepository<Account, ApplicationDbContext>, IAccountRepository
 {
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="logger"></param>
     public AccountRepository(ApplicationDbContext context, ILogger<BaseRepository<Account, ApplicationDbContext>> logger) : base(context, logger)
     {
     }
 
     /// <inheritdoc/>
-    public async Task<Account> GetAccountByEmail(string email)
+    public async Task<Account?> GetAccountByEmail(string email)
     {
-        try
-        {
-            var account = await _context.Account.FirstOrDefaultAsync(x => x.Email == email);
-            return account;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message);
-            _logger.LogError(ex.StackTrace);
-            throw new Exception(ex.Message);
-        }
+        var account = await _context.Account.FirstOrDefaultAsync(x => x.Email.Equals(email));
+        return account;
     }
 }

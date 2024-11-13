@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\core\Volcanion.Core.Handler\Volcanion.Core.Handlers.csproj" />
+    <ProjectReference Include="..\Volcanion.Identity.Models\Volcanion.Identity.Models.csproj" />
+    <ProjectReference Include="..\Volcanion.Identity.Services\Volcanion.Identity.Services.csproj" />
+  </ItemGroup>
+
+</Project>

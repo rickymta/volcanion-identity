@@ -1,6 +1,12 @@
 ﻿namespace Volcanion.Core.Models.Request;
 
+/// <summary>
+/// UpdateRequestBase
+/// </summary>
 public class UpdateRequestBase
 {
-    public string Id { get; set; } = null!;
+    /// <summary>
+    /// Id
+    /// </summary>
+    public Guid Id { get; set; }
 }

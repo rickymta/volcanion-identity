@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Volcanion.Core.Presentation.Controllers;
+using Volcanion.Identity.Handlers.Abstractions;
 using Volcanion.Identity.Models.Request;
-using Volcanion.Identity.ServiceHandler.Abstractions;
 
 namespace Volcanion.Identity.Presentation.Controllers;
 
@@ -18,19 +18,19 @@ public class AuthController : BaseController
     private readonly ILogger<AuthController> _logger;
 
     /// <summary>
-    /// IAccountService instance
+    /// IAccountHandler instance
     /// </summary>
-    private readonly IAccountService _accountService;
+    private readonly IAccountHandler _accountHandler;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="logger"></param>
-    /// <param name="accountService"></param>
-    public AuthController(ILogger<AuthController> logger, IAccountService accountService)
+    /// <param name="accountHandler"></param>
+    public AuthController(ILogger<AuthController> logger, IAccountHandler accountHandler)
     {
         _logger = logger;
-        _accountService = accountService;
+        _accountHandler = accountHandler;
     }
 
     /// <summary>
@@ -42,16 +42,8 @@ public class AuthController : BaseController
     [Route("register")]
     public async Task<IActionResult> Register(AccountRegister account)
     {
-        try
-        {
-            var result = await _accountService.Register(account);
-            return Ok(SuccessData(result));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(5, ex, "Something went wrong...");
-            return Ok(ErrorMessage(ex.Message));
-        }
+        var result = await _accountHandler.Register(account);
+        return Ok(SuccessData(result));
     }
 
     /// <summary>
@@ -63,16 +55,8 @@ public class AuthController : BaseController
     [Route("login")]
     public async Task<IActionResult> Login(AccountLogin account)
     {
-        try
-        {
-            var result = await _accountService.Login(account);
-            return Ok(SuccessData(result));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(5, ex, "Something went wrong...");
-            return Ok(ErrorMessage(ex.Message));
-        }
+        var result = await _accountHandler.Login(account);
+        return Ok(SuccessData(result));
     }
 
     /// <summary>
@@ -84,15 +68,7 @@ public class AuthController : BaseController
     [Route("refresh-token")]
     public async Task<IActionResult> RefreshToken(TokenRequest request)
     {
-        try
-        {
-            var result = await _accountService.RefreshToken(request);
-            return Ok(SuccessData(result));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(5, ex, "Something went wrong...");
-            return Ok(ErrorMessage(ex.Message));
-        }
+        var result = await _accountHandler.RefreshToken(request);
+        return Ok(SuccessData(result));
     }
 }

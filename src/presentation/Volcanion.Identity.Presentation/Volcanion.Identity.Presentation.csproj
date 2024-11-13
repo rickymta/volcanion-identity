@@ -9,11 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.10" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />
     <PackageReference Include="Serilog" Version="4.1.0" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
@@ -24,9 +29,14 @@
     <ProjectReference Include="..\..\core\Volcanion.Core.Infrastructure\Volcanion.Core.Infrastructure.csproj" />
     <ProjectReference Include="..\..\core\Volcanion.Core.Models\Volcanion.Core.Models.csproj" />
     <ProjectReference Include="..\..\core\Volcanion.Core.Presentation\Volcanion.Core.Presentation.csproj" />
-    <ProjectReference Include="..\..\core\Volcanion.Core.ServiceHandler\Volcanion.Core.ServiceHandler.csproj" />
+    <ProjectReference Include="..\Volcanion.Identity.Handlers\Volcanion.Identity.Handlers.csproj" />
+    <ProjectReference Include="..\Volcanion.Identity.Infrastructure\Volcanion.Identity.Infrastructure.csproj" />
     <ProjectReference Include="..\Volcanion.Identity.Models\Volcanion.Identity.Models.csproj" />
-    <ProjectReference Include="..\Volcanion.Identity.ServiceHandler\Volcanion.Identity.ServiceHandler.csproj" />
+    <ProjectReference Include="..\Volcanion.Identity.Services\Volcanion.Identity.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Secrets\" />
   </ItemGroup>
 
 </Project>

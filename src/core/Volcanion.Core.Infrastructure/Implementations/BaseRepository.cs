@@ -33,7 +33,7 @@ public class BaseRepository<T, TContext> : IGenericRepository<T>
     }
 
     /// <inheritdoc/>
-    public async Task<string> CreateAsync(T entity)
+    public async Task<Guid> CreateAsync(T entity)
     {
         try
         {
@@ -55,7 +55,7 @@ public class BaseRepository<T, TContext> : IGenericRepository<T>
     }
 
     /// <inheritdoc/>
-    public async Task<bool> DeleteAsync(string id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
         try
         {
@@ -104,7 +104,7 @@ public class BaseRepository<T, TContext> : IGenericRepository<T>
     }
 
     /// <inheritdoc/>
-    public async Task<T?> GetAsync(string id)
+    public async Task<T?> GetAsync(Guid id)
     {
         try
         {

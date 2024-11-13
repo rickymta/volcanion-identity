@@ -1,17 +1,34 @@
 ﻿using System.Net;
 
-namespace Volcanion.Core.Presentation.Middlewares.Exceptions
+namespace Volcanion.Core.Presentation.Middlewares.Exceptions;
+
+/// <summary>
+/// ExcMidResult
+/// </summary>
+public class ExcMidResult
 {
-    public class ExcMidResult
-    {
-        public HttpStatusCode ErrorCode { get; set; }
+    /// <summary>
+    /// ErrorCode
+    /// </summary>
+    public HttpStatusCode ErrorCode { get; set; }
 
-        public string ErrorStatus { get; set; }
+    /// <summary>
+    /// ErrorStatus
+    /// </summary>
+    public string ErrorStatus { get; set; }
 
-        public string ErrorMessage { get; set; }
+    /// <summary>
+    /// ErrorMessage
+    /// </summary>
+    public string ErrorMessage { get; set; }
 
-        public string ErrorDetails { get; set; }
+    /// <summary>
+    /// ErrorDetails
+    /// </summary>
+    public string ErrorDetails { get; set; }
 
-        public string? StackTrace { get; set; }
-    }
+    /// <summary>
+    /// StackTrace
+    /// </summary>
+    public string? StackTrace { get; set; }
 }
