@@ -34,7 +34,7 @@ services:
 
   volcanion-identity:
     build:
-      context: src/presentation/Volcanion.Identity.Presentation
+      context: src/presentation/Volcanion_Identity_Presentation
       dockerfile: Dockerfile
     container_name: volcanion-identity
     ports:
