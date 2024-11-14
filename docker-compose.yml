@@ -20,12 +20,13 @@ services:
       dockerfile: Dockerfile
       args:
         POSTGRES_VERSION: ${PG_VERSION}
-        POSTGRES_USER: ${PG_USER}
-        POSTGRES_PASSWORD: ${PG_PASSWORD}
-        POSTGRES_DB: ${PG_DATABASE}
     container_name: volcanion-identity-postgres
+    environment:
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_DB=${PG_DATABASE}
     ports:
-      - "5432:5432"
+      - "5532:5432"
     networks:
       - volcanion-identity-network
     volumes:
@@ -34,12 +35,16 @@ services:
 
   volcanion-identity:
     build:
-      context: Volcanion_Identity_Presentation/
-      dockerfile: DockerfileIn
+      context: .
+      dockerfile: src/Volcanion.Identity.Presentation/Dockerfile
+      args:
+        - NUGET_SOURCE=$NUGET_SOURCE
     container_name: volcanion-identity
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     ports:
-      - "5000:443"
-      - "5001:80"
+      - "5043:443"
+      - "5080:80"
     networks:
       - volcanion-identity-network
     depends_on:
