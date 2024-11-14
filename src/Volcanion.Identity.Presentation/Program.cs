@@ -70,7 +70,7 @@ builder.Services.AddApiVersioning(x =>
 
 // Add Entity Framework DBContext
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString, b => b.MigrationsAssembly("Volcanion.Identity.Presentation")));
 
 // Use serilog
 configureLogging();
