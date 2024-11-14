@@ -14,6 +14,7 @@ using Volcanion.Identity.Models.MappingProfiles;
 using Volcanion.Identity.Services;
 using Serilog;
 using System.Net;
+using Volcanion.Identity.Models.Setting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,9 @@ builder.Services.AddAutoMapper(typeof(DtoMappingProfile));
 // Add Redis
 builder.Services.Configure<RedisOptions>(builder.Configuration.GetSection("Redis"));
 builder.Services.AddRedisCacheService(builder.Configuration.GetSection("Redis"));
+
+// Add JWT Authentication settings
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
 // Configure CORS
 var corsOptions = builder.Configuration.GetSection("Cors");

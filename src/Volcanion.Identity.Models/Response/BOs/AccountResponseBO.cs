@@ -31,11 +31,6 @@ public class AccountResponseBO
     public string Email { get; set; } = null!;
 
     /// <summary>
-    /// Password
-    /// </summary>
-    public string Password { get; set; } = null!;
-
-    /// <summary>
     /// Avatar
     /// </summary>
     public string? Avatar { get; set; }

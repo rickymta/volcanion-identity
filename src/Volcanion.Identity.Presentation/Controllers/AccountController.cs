@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Volcanion.Core.Models.Attributes;
 using Volcanion.Core.Presentation.Controllers;
 using Volcanion.Identity.Handlers.Abstractions;
 using Volcanion.Identity.Models.Entities;
@@ -14,6 +15,7 @@ namespace Volcanion.Identity.Presentation.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
 [ApiVersion("1.0")]
+[VolcanionAuth(["Account.*"])]
 public class AccountController : BaseController
 {
     /// <summary>
@@ -43,6 +45,7 @@ public class AccountController : BaseController
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost]
+    [VolcanionAuth(["Account.All", "Account.Create"])]
     public async Task<IActionResult> CreateAsync(AccountRequestDTO request)
     {
         var Account = _mapper.Map<Account>(request);
@@ -56,6 +59,7 @@ public class AccountController : BaseController
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPut]
+    [VolcanionAuth(["Account.All", "Account.Update"])]
     public async Task<IActionResult> UpdateAsync(AccountRequestDTO request)
     {
         var Account = _mapper.Map<Account>(request);
@@ -69,6 +73,7 @@ public class AccountController : BaseController
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete("{id}")]
+    [VolcanionAuth(["Account.All", "Account.Delete"])]
     public async Task<IActionResult> DeleteAsync(Guid id)
     {
         var result = await _accountHandler.DeleteAsync(id);
@@ -80,6 +85,7 @@ public class AccountController : BaseController
     /// </summary>
     /// <returns></returns>
     [HttpGet]
+    [VolcanionAuth(["Account.All", "Account.GetAll"])]
     public async Task<IActionResult> GetAllAsync()
     {
         var result = await _accountHandler.GetAllAsync();
@@ -93,6 +99,7 @@ public class AccountController : BaseController
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("{id}")]
+    [VolcanionAuth(["Account.All", "Account.GetOne"])]
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
         var result = await _accountHandler.GetAsync(id);
