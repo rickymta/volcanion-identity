@@ -1,6 +1,5 @@
 ﻿using Volcanion.Core.Models.Enums;
 using Volcanion.Core.Models.Jwt;
-using Volcanion.Identity.Models.Entities;
 
 namespace Volcanion.Identity.Infrastructure.Abstractions;
 
@@ -12,16 +11,15 @@ public interface IJwtProvider
     /// <summary>
     /// GenerateJwt
     /// </summary>
-    /// <param name="account"></param>
+    /// <param name="data"></param>
     /// <param name="audience"></param>
     /// <param name="issuer"></param>
     /// <param name="allowedOrigins"></param>
-    /// <param name="groupAccess"></param>
     /// <param name="resourceAccess"></param>
     /// <param name="type"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public string GenerateJwt(Account account, string audience, string issuer, List<string> allowedOrigins, List<string> groupAccess, ResourceAccess resourceAccess, JwtType type, string sessionId);
+    public string GenerateJwt(object data, string audience, string issuer, List<string> allowedOrigins, ResourceAccess resourceAccess, JwtType type, string sessionId);
 
     /// <summary>
     /// ValidateJwt

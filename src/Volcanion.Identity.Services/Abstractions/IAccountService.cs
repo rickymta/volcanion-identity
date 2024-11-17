@@ -1,7 +1,8 @@
-﻿using Volcanion.Core.Services.Abstractions;
+﻿using System.Linq.Expressions;
+using Volcanion.Core.Models.Common;
+using Volcanion.Core.Models.Filter;
+using Volcanion.Core.Services.Abstractions;
 using Volcanion.Identity.Models.Entities;
-using Volcanion.Identity.Models.Request;
-using Volcanion.Identity.Models.Response;
 
 namespace Volcanion.Identity.Services.Abstractions;
 
@@ -11,23 +12,17 @@ namespace Volcanion.Identity.Services.Abstractions;
 public interface IAccountService : IBaseService<Account>
 {
     /// <summary>
-    /// Register
+    /// UpdateAccountAsync
     /// </summary>
     /// <param name="account"></param>
     /// <returns></returns>
-    Task<AccountResponse?> Register(AccountRegister account);
+    Task<bool> UpdateAccountAsync(Account account);
 
     /// <summary>
-    /// Login
+    /// FilterDataPagingAsync
     /// </summary>
-    /// <param name="account"></param>
+    /// <param name="filter"></param>
+    /// <param name="expression"></param>
     /// <returns></returns>
-    Task<AccountResponse?> Login(AccountLogin account);
-
-    /// <summary>
-    /// RefreshToken
-    /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
-    Task<AccountResponse?> RefreshToken(TokenRequest request);
+    Task<DataPaging<Account>> FilterDataPagingAsync(FilterBase filter, Expression<Func<Account, bool>> expression);
 }

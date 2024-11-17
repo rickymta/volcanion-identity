@@ -5,12 +5,12 @@ namespace Volcanion.Identity.Models.Response;
 /// <summary>
 /// AccountResponse
 /// </summary>
-public class AccountResponse
+public class LoginResponse
 {
     /// <summary>
     /// Account
     /// </summary>
-    public Account Account { get; set; }
+    public object? Data { get; set; }
 
     /// <summary>
     /// AccessToken
