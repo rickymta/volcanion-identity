@@ -6,6 +6,11 @@
 public class AccountRequestDTO
 {
     /// <summary>
+    /// Id
+    /// </summary>
+    public Guid? Id { get; set; } = Guid.NewGuid();
+
+    /// <summary>
     /// Fullname
     /// </summary>
     public string Fullname { get; set; } = null!;
@@ -18,7 +23,7 @@ public class AccountRequestDTO
     /// <summary>
     /// Password
     /// </summary>
-    public string Password { get; set; } = null!;
+    public string? Password { get; set; } = null!;
 
     /// <summary>
     /// Avatar
@@ -29,4 +34,14 @@ public class AccountRequestDTO
     /// Address
     /// </summary>
     public string? Address { get; set; }
+
+    /// <summary>
+    /// PhoneNumber
+    /// </summary>
+    public string? PhoneNumber { get; set; }
+
+    /// <summary>
+    /// IsActived
+    /// </summary>
+    public bool? IsActived { get; set; }
 }

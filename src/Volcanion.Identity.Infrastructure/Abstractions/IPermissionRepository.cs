@@ -1,8 +1,12 @@
 ﻿using Volcanion.Core.Infrastructure.Abstractions;
 using Volcanion.Identity.Models.Entities;
+using Volcanion.Identity.Models.Filters;
 
 namespace Volcanion.Identity.Infrastructure.Abstractions;
 
-public interface IPermissionRepository : IGenericRepository<Permission>
+/// <summary>
+/// IPermissionRepository
+/// </summary>
+public interface IPermissionRepository : IGenericRepository<Permission, PermissionFilter>
 {
 }

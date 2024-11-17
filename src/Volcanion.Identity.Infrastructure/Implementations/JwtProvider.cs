@@ -100,6 +100,7 @@ internal class JwtProvider : IJwtProvider
             GroupAccess = groupAccess,
             Expiration = expirationUnixTime,
             ResourceAccess = resourceAccess,
+            TokenId = account.Id.ToString(),
             Email = account.Email,
             Name = account.Fullname,
             SessionId = sessionId

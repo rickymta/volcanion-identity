@@ -1,6 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Security.Principal;
 using Volcanion.Core.Common.Abstractions;
 using Volcanion.Core.Models.Enums;
 using Volcanion.Core.Models.Jwt;
@@ -8,6 +9,7 @@ using Volcanion.Core.Presentation.Middlewares.Exceptions;
 using Volcanion.Core.Services.Implementations;
 using Volcanion.Identity.Infrastructure.Abstractions;
 using Volcanion.Identity.Models.Entities;
+using Volcanion.Identity.Models.Filters;
 using Volcanion.Identity.Models.Request;
 using Volcanion.Identity.Models.Response;
 using Volcanion.Identity.Models.Setting;
@@ -16,7 +18,7 @@ using Volcanion.Identity.Services.Abstractions;
 namespace Volcanion.Identity.Services.Implementations;
 
 /// <inheritdoc />
-internal class AccountService : BaseService<Account, IAccountRepository>, IAccountService
+internal class AccountService : BaseService<Account, IAccountRepository, AccountFilter>, IAccountService
 {
     /// <summary>
     /// ICacheProvider
@@ -44,6 +46,11 @@ internal class AccountService : BaseService<Account, IAccountRepository>, IAccou
     private readonly IRolePermissionRepository _rolePermissionRepository;
 
     /// <summary>
+    /// IHttpContextAccessor
+    /// </summary>
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    /// <summary>
     /// AllowedOrigin
     /// </summary>
     private string[] AllowedOrigin { get; set; }
@@ -64,7 +71,7 @@ internal class AccountService : BaseService<Account, IAccountRepository>, IAccou
     /// <param name="repository"></param>
     /// <param name="logger"></param>
     /// <param name="hashProvider"></param>
-    public AccountService(IAccountRepository repository, ILogger<BaseService<Account, IAccountRepository>> logger, IHashProvider hashProvider, IOptions<AppSettings> options, IGrantPermissionRepository grantPermissionRepository, IJwtProvider jwtProvider, IRedisCacheProvider redisCacheProvider, IRolePermissionRepository rolePermissionRepository) : base(repository, logger)
+    public AccountService(IAccountRepository repository, ILogger<BaseService<Account, IAccountRepository, AccountFilter>> logger, IHashProvider hashProvider, IOptions<AppSettings> options, IGrantPermissionRepository grantPermissionRepository, IJwtProvider jwtProvider, IRedisCacheProvider redisCacheProvider, IRolePermissionRepository rolePermissionRepository, IHttpContextAccessor httpContextAccessor) : base(repository, logger)
     {
         _hashProvider = hashProvider;
         _grantPermissionRepository = grantPermissionRepository;
@@ -74,6 +81,7 @@ internal class AccountService : BaseService<Account, IAccountRepository>, IAccou
         Audience = options.Value.Audience;
         GroupAccess = options.Value.GroupAccess;
         _rolePermissionRepository = rolePermissionRepository;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     /// <inheritdoc />
@@ -150,6 +158,33 @@ internal class AccountService : BaseService<Account, IAccountRepository>, IAccou
         _ = _redisCacheProvider.SetStringAsync(sessionId, "Valid");
         // Generate account response and return
         return GenerateAccountResponse(registerAccount, account.Issuer, true, resourceAccess, sessionId);
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> UpdateAccountAsync(Account account)
+    {
+        var routeData = _httpContextAccessor.HttpContext.GetRouteData().Values;
+        var accountFind = await _repository.GetAsync(account.Id);
+        if (accountFind == null) return false;
+        account.Password = string.IsNullOrEmpty(account.Password) ? accountFind.Password : _hashProvider.HashPassword(account.Password);
+
+        if (account.IsActived != accountFind.IsActived)
+        {
+            if (!account.IsActived)
+            {
+                account.IsDeleted = true;
+                account.DeletedAt = DateTimeOffset.Now;
+                account.DeletedBy = routeData["AccountId"].ToString();
+            }
+            else
+            {
+                account.IsDeleted = false;
+                account.DeletedAt = null;
+                account.DeletedBy = null;
+            }
+        }
+
+        return await _repository.UpdateAsync(account);
     }
 
     /// <summary>

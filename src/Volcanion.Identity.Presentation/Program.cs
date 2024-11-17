@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Volcanion.Core.Common;
-using Volcanion.Core.Common.Models.Redis;
 using Volcanion.Core.Common.Providers;
 using Volcanion.Core.Models.Response;
 using Volcanion.Core.Presentation.Middlewares;
@@ -18,7 +17,6 @@ using Volcanion.Identity.Models.Setting;
 using StackExchange.Redis;
 using Volcanion.Core.Common.Abstractions;
 using Volcanion.Core.Common.Implementations;
-using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,8 +38,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Add AutoMapper
-builder.Services.AddAutoMapper(typeof(DtoMappingProfile));
-builder.Services.AddAutoMapper(typeof(BoMappingProfile));
+builder.Services.AddAutoMapper(typeof(DtoMappingProfile), typeof(BoMappingProfile));
+//builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Add Redis
 var redisConfiguration = builder.Configuration.GetSection("Redis:ConnectionString").Value;
@@ -91,35 +89,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Use serilog
 configureLogging();
 builder.Host.UseSerilog();
-
-// Configure the global error handling middleware
-builder.Services.Configure<ApiBehaviorOptions>(options =>
-{
-    // Configure the global error handling middleware
-    options.InvalidModelStateResponseFactory = context =>
-    {
-        // Get the errors
-        var errors = context.ModelState
-            .Where(e => e.Value.Errors.Count > 0)
-            .Select(e => new
-            {
-                Field = e.Key,
-                ErrorMessages = e.Value.Errors.Select(x => x.ErrorMessage).ToArray()
-            });
-
-        var response = new ResponseResult
-        {
-            Data = errors,
-            ErrorCode = -1,
-            Message = "Invalid model state",
-            StatusCodes = HttpStatusCode.BadRequest,
-            Succeeded = false,
-            Detail = "Invalid model state"
-        };
-
-        return new BadRequestObjectResult(response);
-    };
-});
 
 var app = builder.Build();
 

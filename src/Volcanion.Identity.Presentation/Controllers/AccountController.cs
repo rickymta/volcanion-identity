@@ -5,6 +5,7 @@ using Volcanion.Core.Presentation.Controllers;
 using Volcanion.Identity.Handlers.Abstractions;
 using Volcanion.Identity.Models.Entities;
 using Volcanion.Identity.Models.Request.DTOs;
+using Volcanion.Identity.Models.Response.BOs;
 
 namespace Volcanion.Identity.Presentation.Controllers;
 
@@ -46,8 +47,8 @@ public class AccountController : BaseController
     [VolcanionAuth(["Account.All", "Account.Create"])]
     public async Task<IActionResult> CreateAsync(AccountRequestDTO request)
     {
-        var Account = _mapper.Map<Account>(request);
-        var result = await _accountHandler.CreateAsync(Account);
+        var account = _mapper.Map<Account>(request);
+        var result = await _accountHandler.CreateAsync(account);
         return Ok(SuccessData(result));
     }
 
@@ -60,8 +61,8 @@ public class AccountController : BaseController
     [VolcanionAuth(["Account.All", "Account.Update"])]
     public async Task<IActionResult> UpdateAsync(AccountRequestDTO request)
     {
-        var Account = _mapper.Map<Account>(request);
-        var result = await _accountHandler.UpdateAsync(Account);
+        var account = _mapper.Map<Account>(request);
+        var result = await _accountHandler.UpdateAccountAsync(account);
         return Ok(SuccessData(result));
     }
 
@@ -100,7 +101,8 @@ public class AccountController : BaseController
     public async Task<IActionResult> GetAllAsync()
     {
         var result = await _accountHandler.GetAllAsync();
-        return Ok(SuccessData(result));
+        var accounts = _mapper.Map<IEnumerable<AccountResponseBO>>(result);
+        return Ok(SuccessData(accounts));
     }
 
     /// <summary>
@@ -113,6 +115,7 @@ public class AccountController : BaseController
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
         var result = await _accountHandler.GetAsync(id);
-        return Ok(SuccessData(result));
+        var account = _mapper.Map<AccountResponseBO>(result);
+        return Ok(SuccessData(account));
     }
 }

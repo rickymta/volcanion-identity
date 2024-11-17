@@ -8,7 +8,9 @@ public class BoMappingProfile : Profile
 {
     public BoMappingProfile()
     {
-        CreateMap<Account, AccountResponseBO>();
+        CreateMap<AccountResponseBO, Account>()
+            .ForMember(dest => dest.Password, opt => opt.Ignore())
+            .ReverseMap();
 
         CreateMap<Role, RoleResponseBO>()
             .ReverseMap()

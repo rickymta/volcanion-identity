@@ -1,8 +1,12 @@
 ﻿using Volcanion.Core.Infrastructure.Abstractions;
 using Volcanion.Identity.Models.Entities;
+using Volcanion.Identity.Models.Filters;
 
 namespace Volcanion.Identity.Infrastructure.Abstractions;
 
-public interface IRoleRepository : IGenericRepository<Role>
+/// <summary>
+/// IRoleRepository
+/// </summary>
+public interface IRoleRepository : IGenericRepository<Role, RoleFilter>
 {
 }

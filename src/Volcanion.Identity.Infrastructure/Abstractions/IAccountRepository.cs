@@ -1,9 +1,13 @@
 ﻿using Volcanion.Core.Infrastructure.Abstractions;
 using Volcanion.Identity.Models.Entities;
+using Volcanion.Identity.Models.Filters;
 
 namespace Volcanion.Identity.Infrastructure.Abstractions;
 
-public interface IAccountRepository : IGenericRepository<Account>
+/// <summary>
+/// IAccountRepository
+/// </summary>
+public interface IAccountRepository : IGenericRepository<Account, AccountFilter>
 {
     /// <summary>
     /// GetAccountByEmail

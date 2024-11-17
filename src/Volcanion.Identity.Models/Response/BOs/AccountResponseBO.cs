@@ -41,22 +41,7 @@ public class AccountResponseBO
     public string? Address { get; set; }
 
     /// <summary>
-    /// CreatedAt
+    /// PhoneNumber
     /// </summary>
-    public DateTime CreatedAt { get; set; }
-
-    /// <summary>
-    /// CreatedId
-    /// </summary>
-    public string? CreatedBy { get; set; }
-
-    /// <summary>
-    /// UpdatedAt
-    /// </summary>
-    public DateTime? UpdatedAt { get; set; }
-
-    /// <summary>
-    /// UpdatedId
-    /// </summary>
-    public string? UpdatedBy { get; set; }
+    public string? PhoneNumber { get; set; }
 }

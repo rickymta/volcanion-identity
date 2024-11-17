@@ -33,6 +33,11 @@ public class Account : BaseEntity
     public string? Address { get; set; }
 
     /// <summary>
+    /// PhoneNumber
+    /// </summary>
+    public string? PhoneNumber { get; set; }
+
+    /// <summary>
     /// GrantPermissions
     /// </summary>
     public ICollection<GrantPermission> GrantPermissions { get; set; } = [];

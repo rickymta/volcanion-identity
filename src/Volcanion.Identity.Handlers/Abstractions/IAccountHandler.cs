@@ -1,5 +1,6 @@
 ﻿using Volcanion.Core.Handlers.Abstractions;
 using Volcanion.Identity.Models.Entities;
+using Volcanion.Identity.Models.Filters;
 using Volcanion.Identity.Models.Request;
 using Volcanion.Identity.Models.Response;
 
@@ -8,7 +9,7 @@ namespace Volcanion.Identity.Handlers.Abstractions;
 /// <summary>
 /// IAccountHandler
 /// </summary>
-public interface IAccountHandler : IBaseHandler<Account>
+public interface IAccountHandler : IBaseHandler<Account, AccountFilter>
 {
     /// <summary>
     /// Register
@@ -30,4 +31,11 @@ public interface IAccountHandler : IBaseHandler<Account>
     /// <param name="request"></param>
     /// <returns></returns>
     Task<AccountResponse?> RefreshToken(TokenRequest request);
+
+    /// <summary>
+    /// UpdateAccountAsync
+    /// </summary>
+    /// <param name="account"></param>
+    /// <returns></returns>
+    Task<bool> UpdateAccountAsync(Account account);
 }
