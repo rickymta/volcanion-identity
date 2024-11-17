@@ -14,7 +14,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />
-    <PackageReference Include="Volcanion.Core.Models" Version="1.0.0" />
+    <!--<PackageReference Include="Volcanion.Core.Models" Version="1.0.0" />-->
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Gitlab\volcanion-core\src\Volcanion.Core.Models\Volcanion.Core.Models.csproj" />
   </ItemGroup>
 
 </Project>

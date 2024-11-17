@@ -74,40 +74,38 @@ public class VolcanionAuthMiddleware
         var volcanionAuthAttribute = actionDescriptor.ControllerTypeInfo.GetCustomAttribute<VolcanionAuthAttribute>() ?? actionDescriptor.MethodInfo.GetCustomAttribute<VolcanionAuthAttribute>();
 
         // If there is no VolcanionAuthAttribute, call the next middleware
-        if (volcanionAuthAttribute == null)
+        if (volcanionAuthAttribute != null)
         {
-            await _next(context);
-            return;
-        }
+            // Get role from attribute
+            var roleFromAttribute = volcanionAuthAttribute.Roles;
 
-        // Get role from attribute
-        var roleFromAttribute = volcanionAuthAttribute.Roles;
-
-        // Check the token in the Authorization header
-        if (context.Request.Headers.TryGetValue("Authorization", out var authorizationHeader) && authorizationHeader.ToString().StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-        {
-            // Get the token from the header
-            var token = authorizationHeader.ToString()["Bearer ".Length..].Trim();
-
-            // Validate the token
-            if (_jwtProvider.ValidateJwt(token, JwtType.AccessToken))
+            // Check the token in the Authorization header
+            if (context.Request.Headers.TryGetValue("Authorization", out var authorizationHeader) && authorizationHeader.ToString().StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
             {
-                // Decode the token
-                var (header, payload) = _jwtProvider.DecodeJwt(token);
-                // Get roles from claims
-                var rolesInClaims = payload?.ResourceAccess.RoleAccess.Roles;
+                // Get the token from the header
+                var token = authorizationHeader.ToString()["Bearer ".Length..].Trim();
 
-                // Compare roles in claims with roles in attribute
-                if (rolesInClaims != null && VerifyRole([.. rolesInClaims!], roleFromAttribute))
+                // Validate the token
+                if (_jwtProvider.ValidateJwt(token, JwtType.AccessToken))
                 {
-                    await _next(context);
-                    return;
+                    // Decode the token
+                    var (header, payload) = _jwtProvider.DecodeJwt(token);
+                    // Get roles from claims
+                    var rolesInClaims = payload?.ResourceAccess.RoleAccess.Roles;
+
+                    // Compare roles in claims with roles in attribute
+                    if (rolesInClaims != null && VerifyRole([.. rolesInClaims!], roleFromAttribute))
+                    {
+                        await _next(context);
+                        return;
+                    }
                 }
             }
         }
 
         // Return 403 Forbidden
         context.Response.StatusCode = StatusCodes.Status403Forbidden;
+        return;
     }
 
 

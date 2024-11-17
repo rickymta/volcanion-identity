@@ -10,6 +10,7 @@ COPY src/Volcanion.Identity.Infrastructure/Volcanion.Identity.Infrastructure.csp
 COPY src/Volcanion.Identity.Models/Volcanion.Identity.Models.csproj src/Volcanion.Identity.Models/
 COPY src/Volcanion.Identity.Services/Volcanion.Identity.Services.csproj src/Volcanion.Identity.Services/
 COPY src/Volcanion.Identity.Presentation/Volcanion.Identity.Presentation.csproj src/Volcanion.Identity.Presentation/
+COPY src/Volcanion.Identity.Presentation/Secrets/* src/Volcanion.Identity.Presentation/Secrets/
 
 RUN dotnet restore --source "https://api.nuget.org/v3/index.json" --source "$NUGET_SOURCE"
 

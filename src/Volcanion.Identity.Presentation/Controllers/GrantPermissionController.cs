@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Volcanion.Core.Models.Attributes;
 using Volcanion.Core.Presentation.Controllers;
 using Volcanion.Identity.Handlers.Abstractions;
 using Volcanion.Identity.Models.Entities;
@@ -14,6 +16,7 @@ namespace Volcanion.Identity.Presentation.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
 [ApiVersion("1.0")]
+[AllowAnonymous]
 public class GrantPermissionController : BaseController
 {
     /// <summary>
@@ -71,6 +74,18 @@ public class GrantPermissionController : BaseController
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(Guid id)
     {
+        var result = await _grantPermissionHandler.SoftDeleteAsync(id);
+        return Ok(SuccessData(result));
+    }
+
+    /// <summary>
+    /// HardDeleteAsync
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpDelete("hard-delete/{id}")]
+    public async Task<IActionResult> HardDeleteAsync(Guid id)
+    {
         var result = await _grantPermissionHandler.DeleteAsync(id);
         return Ok(SuccessData(result));
     }
@@ -83,8 +98,7 @@ public class GrantPermissionController : BaseController
     public async Task<IActionResult> GetAllAsync()
     {
         var result = await _grantPermissionHandler.GetAllAsync();
-        var data = _mapper.Map<IEnumerable<GrantPermissionResponseBO>>(result);
-        return Ok(SuccessData(data));
+        return Ok(SuccessData(result));
     }
 
     /// <summary>
@@ -96,7 +110,6 @@ public class GrantPermissionController : BaseController
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
         var result = await _grantPermissionHandler.GetAsync(id);
-        var data = _mapper.Map<GrantPermissionResponseBO>(result);
-        return Ok(SuccessData(data));
+        return Ok(SuccessData(result));
     }
 }

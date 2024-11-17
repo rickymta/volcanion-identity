@@ -11,16 +11,6 @@ public class GrantPermissionResponseBO
     public Guid Id { get; set; }
 
     /// <summary>
-    /// IsActived
-    /// </summary>
-    public bool IsActived { get; set; }
-
-    /// <summary>
-    /// IsDeleted
-    /// </summary>
-    public bool IsDeleted { get; set; }
-
-    /// <summary>
     /// AccountId
     /// </summary>
     public Guid AccountId { get; set; }
@@ -31,22 +21,22 @@ public class GrantPermissionResponseBO
     public Guid RolePermissionId { get; set; }
 
     /// <summary>
-    /// CreatedAt
+    /// RoleId
     /// </summary>
-    public DateTime CreatedAt { get; set; }
+    public Guid RoleId { get; set; }
 
     /// <summary>
-    /// CreatedId
+    /// RoleName
     /// </summary>
-    public string? CreatedBy { get; set; }
+    public string RoleName { get; set; } = null!;
 
     /// <summary>
-    /// UpdatedAt
+    /// PermissionId
     /// </summary>
-    public DateTime? UpdatedAt { get; set; }
+    public Guid PermissionId { get; set; }
 
     /// <summary>
-    /// UpdatedId
+    /// PermissionName
     /// </summary>
-    public string? UpdatedBy { get; set; }
+    public string PermissionName { get; set; } = null!;
 }

@@ -7,13 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Gitlab\volcanion-core\src\Volcanion.Core.Presentation\Volcanion.Core.Presentation.csproj" />
+    <ProjectReference Include="..\..\..\..\..\Gitlab\volcanion-core\src\Volcanion.Core.Services\Volcanion.Core.Services.csproj" />
     <ProjectReference Include="..\Volcanion.Identity.Infrastructure\Volcanion.Identity.Infrastructure.csproj" />
     <ProjectReference Include="..\Volcanion.Identity.Models\Volcanion.Identity.Models.csproj" />
   </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Volcanion.Core.Services" Version="1.0.0" />
-		<PackageReference Include="Volcanion.Core.Presentation" Version="1.0.0" />
+		<!--<PackageReference Include="Volcanion.Core.Services" Version="1.0.0" />-->
+		<!--<PackageReference Include="Volcanion.Core.Presentation" Version="1.0.0" />-->
 	</ItemGroup>
 
 </Project>

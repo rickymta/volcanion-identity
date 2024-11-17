@@ -56,6 +56,7 @@ public class AuthController : BaseController
     public async Task<IActionResult> Login(AccountLogin account)
     {
         var result = await _accountHandler.Login(account);
+        if (result == null) return BadRequest(ErrorMessage("Invalid username or password!"));
         return Ok(SuccessData(result));
     }
 

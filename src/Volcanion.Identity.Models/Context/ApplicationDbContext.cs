@@ -43,58 +43,56 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         // Call base OnModelCreating method
         base.OnModelCreating(modelBuilder);
 
-        // Configure the Role entity
-        modelBuilder.Entity<Role>(r =>
-        {
-            // A Role can have many RolePermissions
-            r.HasMany(role => role.RolePermissions)
-            // Each RolePermission is associated with one Role
-            .WithOne(p => p.Role)
-            // The foreign key in RolePermission is PermissionId
-            .HasForeignKey(p => p.PermissionId);
-        });
+        // RolePermission: Relationship with Role
+        modelBuilder.Entity<RolePermission>()
+            .HasOne(rp => rp.Role)
+            .WithMany(r => r.RolePermissions)
+            .HasForeignKey(rp => rp.RoleId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-        // Configure the Permission entity
-        modelBuilder.Entity<Permission>(p =>
-        {
-            // A Permission can have many RolePermissions
-            p.HasMany(permission => permission.RolePermissions)
-            // Each RolePermission is associated with one Permission
-            .WithOne(p => p.Permission)
-            // The foreign key in RolePermission is PermissionId
-            .HasForeignKey(p => p.PermissionId);
-        });
+        // RolePermission: Relationship with Permission
+        modelBuilder.Entity<RolePermission>()
+            .HasOne(rp => rp.Permission)
+            .WithMany(p => p.RolePermissions)
+            .HasForeignKey(rp => rp.PermissionId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-        // Configure the GrantPermission entity
-        modelBuilder.Entity<GrantPermission>(gp =>
-        {
-            // A GrantPermission can have many RolePermissions
-            gp.HasMany(grant => grant.RolePermissions)
-            // Each RolePermission is associated with one GrantPermission
-            .WithOne(rp => rp.GrantPermission)
-            // The foreign key in RolePermission is GrantPermissionId
-            .HasForeignKey(rp => rp.GrantPermissionId);
-        });
+        // GrantPermission: Relationship with RolePermission
+        modelBuilder.Entity<GrantPermission>()
+            .HasOne(gp => gp.RolePermission)
+            .WithMany(rp => rp.GrantPermissions)
+            .HasForeignKey(gp => gp.RolePermissionId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-        // Configure the Account entity
-        modelBuilder.Entity<Account>(ac =>
-        {
-            // An Account can have many GrantPermissions
-            ac.HasMany(account => account.GrantPermissions)
-            // Each GrantPermission is associated with one Account
-            .WithOne(gp => gp.Account)
-            // The foreign key in GrantPermission is AccountId
-            .HasForeignKey(gp => gp.AccountId);
-        });
+        // GrantPermission: Relationship with Account
+        modelBuilder.Entity<GrantPermission>()
+            .HasOne(gp => gp.Account)
+            .WithMany(a => a.GrantPermissions)
+            .HasForeignKey(gp => gp.AccountId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Account: Unique constraint on Email
+        modelBuilder.Entity<Account>()
+            .HasIndex(a => a.Email)
+            .IsUnique();
+
+        modelBuilder.Entity<Role>().HasData(
+            new Role { Name = "Admin" },
+            new Role { Name = "Account" },
+            new Role { Name = "Role" },
+            new Role { Name = "Permission" },
+            new Role { Name = "RolePermission" },
+            new Role { Name = "GrantPermission" }
+        );
+
+        modelBuilder.Entity<Permission>().HasData(
+            new Permission { Name = "All" },
+            new Permission { Name = "Create" },
+            new Permission { Name = "Read" },
+            new Permission { Name = "Update" },
+            new Permission { Name = "SoftDelete" },
+            new Permission { Name = "HardDelete" },
+            new Permission { Name = "Grant" }
+        );
     }
-
-    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //{
-    //    if (!optionsBuilder.IsConfigured)
-    //    {
-    //        optionsBuilder.UseMySql(
-    //            "YourConnectionString",
-    //            b => b.MigrationsAssembly("Volcanion.Identity.Presentation")); // Tên assembly chứa migration
-    //    }
-    //}
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Security.Principal;
 using Volcanion.Core.Common.Abstractions;
 using Volcanion.Core.Models.Enums;
 using Volcanion.Core.Models.Jwt;
@@ -38,9 +39,19 @@ internal class AccountService : BaseService<Account, IAccountRepository>, IAccou
     private readonly IGrantPermissionRepository _grantPermissionRepository;
 
     /// <summary>
+    /// IRolePermissionRepository instance
+    /// </summary>
+    private readonly IRolePermissionRepository _rolePermissionRepository;
+
+    /// <summary>
     /// AllowedOrigin
     /// </summary>
     private string[] AllowedOrigin { get; set; }
+
+    /// <summary>
+    /// GroupAccess
+    /// </summary>
+    private string[] GroupAccess { get; set; }
 
     /// <summary>
     /// Audience
@@ -53,12 +64,16 @@ internal class AccountService : BaseService<Account, IAccountRepository>, IAccou
     /// <param name="repository"></param>
     /// <param name="logger"></param>
     /// <param name="hashProvider"></param>
-    public AccountService(IAccountRepository repository, ILogger<BaseService<Account, IAccountRepository>> logger, IHashProvider hashProvider, IConfigProvider configProvider, IOptions<AppSettings> options, IGrantPermissionRepository grantPermissionRepository) : base(repository, logger)
+    public AccountService(IAccountRepository repository, ILogger<BaseService<Account, IAccountRepository>> logger, IHashProvider hashProvider, IOptions<AppSettings> options, IGrantPermissionRepository grantPermissionRepository, IJwtProvider jwtProvider, IRedisCacheProvider redisCacheProvider, IRolePermissionRepository rolePermissionRepository) : base(repository, logger)
     {
         _hashProvider = hashProvider;
+        _grantPermissionRepository = grantPermissionRepository;
+        _jwtProvider = jwtProvider;
+        _redisCacheProvider = redisCacheProvider;
         AllowedOrigin = options.Value.AllowedOrigins;
         Audience = options.Value.Audience;
-        _grantPermissionRepository = grantPermissionRepository;
+        GroupAccess = options.Value.GroupAccess;
+        _rolePermissionRepository = rolePermissionRepository;
     }
 
     /// <inheritdoc />
@@ -69,18 +84,41 @@ internal class AccountService : BaseService<Account, IAccountRepository>, IAccou
         // If account not found, return null
         if (accountFind == null) return null;
         // Verify password
-        if (_hashProvider.VerifyPassword(accountFind.Password, account.Password)) return null;
+        if (!_hashProvider.VerifyPassword(accountFind.Password, account.Password)) return null;
 
         // Generate resource access
         var resourceAccess = await GenerateResourceAccessFromRole(accountFind.Id) ?? throw new VolcanionBusinessException("Cannot generate resource access!");
+
+        // Generate session id and save to redis cache
+        var sessionId = Guid.NewGuid().ToString();
+        _ = _redisCacheProvider.SetStringAsync(sessionId, "Valid");
         // Generate account response and return
-        return GenerateAccountResponse(accountFind, account.Issuer, account.RememberMe, resourceAccess);
+        return GenerateAccountResponse(accountFind, account.Issuer, account.RememberMe, resourceAccess, sessionId);
     }
 
     /// <inheritdoc />
     public async Task<AccountResponse?> RefreshToken(TokenRequest request)
     {
-        throw new NotImplementedException();
+        // Validate refresh token
+        if (!_jwtProvider.ValidateJwt(request.Token, JwtType.RefreshToken)) return null;
+        // Decode refresh token and get payload
+        var payload = _jwtProvider.DecodeJwt(request.Token).payload;
+        // If payload is null, return null
+        if (payload == null) return null;
+
+        // Find account by email from payload
+        var accountFind = await _repository.GetAccountByEmail(payload.Email);
+        // If account not found, return null
+        if (accountFind == null) return null;
+
+        // Generate resource access
+        var resourceAccess = await GenerateResourceAccessFromRole(accountFind.Id) ?? throw new VolcanionBusinessException("Cannot generate resource access!");
+
+        // Generate session id and save to redis cache
+        var sessionId = Guid.NewGuid().ToString();
+        _ = _redisCacheProvider.SetStringAsync(sessionId, "Valid");
+        // Generate account response and return
+        return GenerateAccountResponse(accountFind, payload.Issuer, true, resourceAccess, sessionId);
     }
 
     /// <inheritdoc />
@@ -106,8 +144,12 @@ internal class AccountService : BaseService<Account, IAccountRepository>, IAccou
         if (res == Guid.Empty) return null;
         // Generate resource access
         var resourceAccess = await GenerateResourceAccessFromRole(res) ?? throw new VolcanionBusinessException("Cannot generate resource access!");
+
+        // Generate session id and save to redis cache
+        var sessionId = Guid.NewGuid().ToString();
+        _ = _redisCacheProvider.SetStringAsync(sessionId, "Valid");
         // Generate account response and return
-        return GenerateAccountResponse(registerAccount, account.Issuer, true, resourceAccess);
+        return GenerateAccountResponse(registerAccount, account.Issuer, true, resourceAccess, sessionId);
     }
 
     /// <summary>
@@ -118,19 +160,19 @@ internal class AccountService : BaseService<Account, IAccountRepository>, IAccou
     /// <param name="rememberMe"></param>
     /// <param name="resourceAccess"></param>
     /// <returns></returns>
-    private AccountResponse GenerateAccountResponse(Account account, string issuer, bool rememberMe, ResourceAccess resourceAccess)
+    private AccountResponse GenerateAccountResponse(Account account, string issuer, bool rememberMe, ResourceAccess resourceAccess, string sessionId)
     {
         // Get group access from account id
         var groupAccess = GetGroupAccess(account.Id);
 
         // Generate access token
         var refreshToken = "";
-        var accessToken = _jwtProvider.GenerateJwt(account, Audience, issuer, AllowedOrigin.ToList(), groupAccess, resourceAccess, JwtType.AccessToken);
+        var accessToken = _jwtProvider.GenerateJwt(account, Audience, issuer, [.. AllowedOrigin], groupAccess, resourceAccess, JwtType.AccessToken, sessionId);
 
         // If remember me is true, generate refresh token
         if (rememberMe)
         {
-            refreshToken = _jwtProvider.GenerateJwt(account, Audience, issuer, AllowedOrigin.ToList(), groupAccess, resourceAccess, JwtType.RefreshToken);
+            refreshToken = _jwtProvider.GenerateJwt(account, Audience, issuer, [.. AllowedOrigin], groupAccess, resourceAccess, JwtType.RefreshToken, sessionId);
         }
 
         // Return account response
@@ -150,22 +192,20 @@ internal class AccountService : BaseService<Account, IAccountRepository>, IAccou
     private async Task<ResourceAccess?> GenerateResourceAccessFromRole(Guid accountId)
     {
         // Get grant permission by account id
-        var grantPermission = await _grantPermissionRepository.GetGrantPermissionByAccountId(accountId);
+        var grantPermissions = await _grantPermissionRepository.GetGrantPermissionByAccountId(accountId);
+        var roles = new List<string>();
 
-        // If grant permission is null, return null
-        if (grantPermission?.RolePermissions?.Count > 0)
+        if (grantPermissions != null && grantPermissions.Count > 0)
         {
-            // Generate roles from grant permission
-            var roles = grantPermission.RolePermissions.Select(rp => $"{rp.Role.Name}.{rp.Permission.Name}").ToList();
-
-            // Return resource access
-            return new ResourceAccess
-            {
-                RoleAccess = new RoleAccess { Roles = roles }
-            };
+            var roleFound = grantPermissions.Select(rp => $"{rp.RoleName}.{rp.PermissionName}").ToList();
+            if (roleFound != null && roleFound.Count > 0) roles.AddRange(roleFound);
         }
 
-        return null;
+        // Return resource access
+        return new ResourceAccess
+        {
+            RoleAccess = new RoleAccess { Roles = roles }
+        };
     }
 
     /// <summary>
@@ -176,7 +216,7 @@ internal class AccountService : BaseService<Account, IAccountRepository>, IAccou
     private List<string> GetGroupAccess(Guid accountId)
     {
         // TODO: implement group access
-        var groupAccess = new List<string>();
+        var groupAccess = GroupAccess.ToList();
         return groupAccess;
     }
 }

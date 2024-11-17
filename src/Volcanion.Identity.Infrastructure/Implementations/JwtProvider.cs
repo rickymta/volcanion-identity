@@ -1,10 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
 using Volcanion.Core.Common.Abstractions;
 using Volcanion.Core.Models.Enums;
 using Volcanion.Core.Models.Jwt;
+using Volcanion.Core.Presentation.Middlewares.Exceptions;
 using Volcanion.Identity.Infrastructure.Abstractions;
 using Volcanion.Identity.Models.Entities;
+using Volcanion.Identity.Models.Setting;
 
 namespace Volcanion.Identity.Infrastructure.Implementations;
 
@@ -27,16 +31,6 @@ internal class JwtProvider : IJwtProvider
     private readonly IHashProvider _hashProvider;
 
     /// <summary>
-    /// IConfigProvider instance
-    /// </summary>
-    private readonly IConfigProvider _configProvider;
-
-    /// <summary>
-    /// ILogger instance
-    /// </summary>
-    private readonly ILogger<JwtProvider> _logger;
-
-    /// <summary>
     /// PrivateKeyFilePath
     /// </summary>
     private string PrivateKeyFilePath { get; set; }
@@ -57,6 +51,11 @@ internal class JwtProvider : IJwtProvider
     private string RefreshTokenExpiredTime { get; set; }
 
     /// <summary>
+    /// JwtSettings
+    /// </summary>
+    private readonly JwtSettings _jwtSettings;
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="stringProvider"></param>
@@ -64,188 +63,218 @@ internal class JwtProvider : IJwtProvider
     /// <param name="hashProvider"></param>
     /// <param name="configProvider"></param>
     /// <param name="logger"></param>
-    public JwtProvider(IStringProvider stringProvider, IRedisCacheProvider redisCacheProvider, IHashProvider hashProvider, IConfigProvider configProvider, ILogger<JwtProvider> logger)
+    public JwtProvider(IStringProvider stringProvider, IRedisCacheProvider redisCacheProvider, IHashProvider hashProvider, IOptions<JwtSettings> options)
     {
         _stringProvider = stringProvider;
         _redisCacheProvider = redisCacheProvider;
         _hashProvider = hashProvider;
-        _configProvider = configProvider;
-        _logger = logger;
-        PrivateKeyFilePath = _configProvider.GetConfigString("PrivateKeyFilePath");
-        PublicKeyFilePath = _configProvider.GetConfigString("PublicKeyFilePath");
-        AccessTokenExpiredTime = _configProvider.GetConfigString("AccessTokenExpiredTime");
-        RefreshTokenExpiredTime = _configProvider.GetConfigString("RefreshTokenExpiredTime");
+        _jwtSettings = options.Value;
+        PrivateKeyFilePath = _jwtSettings.PrivateKeyFilePath;
+        PublicKeyFilePath = _jwtSettings.PublicKeyFilePath;
+        AccessTokenExpiredTime = _jwtSettings.AccessTokenExpiredTime;
+        RefreshTokenExpiredTime = _jwtSettings.RefreshTokenExpiredTime;
     }
 
     /// <inheritdoc/>
-    public (JwtHeader? header, JwtPayload? payload) DecodeJwt(string token)
+    public (VolcanionJwtHeader? header, VolcanionJwtPayload? payload) DecodeJwt(string token)
     {
-        try
-        {
-            // Split the jwt
-            var jwtSplit = token.Split('.');
-            // Check if the jwt is not valid
-            if (jwtSplit.Length != 3) throw new Exception("Jwt is not valid.");
-
-            // Decode the jwt
-            var headerJsonStr = _hashProvider.Base64Decode(jwtSplit[0]);
-            var payloadJsonStr = _hashProvider.Base64Decode(jwtSplit[1]);
-
-            // Deserialize the jwt
-            var header = JsonConvert.DeserializeObject<JwtHeader>(headerJsonStr);
-            var payload = JsonConvert.DeserializeObject<JwtPayload>(payloadJsonStr);
-            
-            // Return the header and payload
-            return (header, payload);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message);
-            _logger.LogError(ex.StackTrace);
-            throw new Exception(ex.Message);
-        }
+        var payloadDictonary = DecodeJWTToDictionary(token);
+        var payload = ConvertToVolcanionJwtPayload(payloadDictonary);
+        // Return the header and payload
+        return (null, payload);
     }
 
     /// <inheritdoc/>
-    public string GenerateJwt(Account account, string audience, string issuer, List<string> allowedOrigins, List<string> groupAccess, ResourceAccess resourceAccess, JwtType type)
+    public string GenerateJwt(Account account, string audience, string issuer, List<string> allowedOrigins, List<string> groupAccess, ResourceAccess resourceAccess, JwtType type, string sessionId)
     {
-        try
+        // Determine expiration time
+        var expirationTimeStr = type == JwtType.AccessToken ? AccessTokenExpiredTime ?? "10m" : RefreshTokenExpiredTime ?? "30d";
+        var expirationUnixTime = _stringProvider.GenerateDateTimeOffsetFromString(expirationTimeStr).ToUnixTimeSeconds();
+
+        // Generate payload
+        var payload = new VolcanionJwtPayload
         {
-            // Generate header
-            var header = new JwtHeader
-            {
-                Algorithm = "HS512",
-                Type = "JWT"
-            };
+            Audience = audience,
+            Issuer = issuer,
+            AllowedOrigins = allowedOrigins,
+            GroupAccess = groupAccess,
+            Expiration = expirationUnixTime,
+            ResourceAccess = resourceAccess,
+            Email = account.Email,
+            Name = account.Fullname,
+            SessionId = sessionId
+        };
 
-            // Generate expiration time
-            var datetimeOffsetData = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            var datetimeOffsetDataCompareStr = "";
+        // Serialize header and payload
+        var jwtPayload = JsonConvert.SerializeObject(payload);
 
-            if (type == JwtType.AccessToken)
+        // Generate signature
+        return _hashProvider.HashSHA512(jwtPayload, PrivateKeyFilePath);
+    }
+
+    /// <inheritdoc/>
+    public bool ValidateJwt(string jwt, JwtType? type)
+    {
+        // Check for empty JWT and public key
+        if (string.IsNullOrEmpty(jwt)) throw new VolcanionAuthException("Jwt is empty!");
+        if (string.IsNullOrEmpty(PublicKeyFilePath)) throw new VolcanionAuthException("Public key file path is not set!");
+
+        // Split JWT into components and verify signature
+        if (!_hashProvider.VerifySignature(jwt, PublicKeyFilePath)) throw new VolcanionAuthException("Jwt is invalid!");
+
+        // Decode the jwt
+        var payload = DecodeJwt(jwt).payload ?? throw new VolcanionAuthException("Jwt is invalid!");
+        if (payload.Expiration < DateTimeOffset.Now.ToUnixTimeSeconds()) throw new VolcanionAuthException("Jwt is expired!");
+
+        // Validate session ID from Redis cache
+        var sessionId = payload!.SessionId;
+        var cacheSessionId = _redisCacheProvider.GetStringAsync(sessionId).Result;
+
+        if (cacheSessionId == null)
+        {
+            if (type == JwtType.RefreshToken)
             {
-                // Check if the access token expired time is empty and set it to 10 minutes
-                if (string.IsNullOrEmpty(AccessTokenExpiredTime)) AccessTokenExpiredTime = "10m";
-                datetimeOffsetDataCompareStr = AccessTokenExpiredTime;
+                _ = _redisCacheProvider.SetStringAsync(sessionId, "Valid");
+                return true;
+            }
+
+            throw new VolcanionAuthException("Session is expired!");
+        }
+
+        if (!cacheSessionId.Equals("Valid"))
+        {
+            throw new VolcanionAuthException("Session is expired!");
+        }
+
+        return true;
+    }
+
+    /// <inheritdoc/>
+    public (string headerPayload, string signature) SplitJwt(string jwt)
+    {
+        // Split the jwt
+        var jwtSplit = jwt.Split('.');
+        // Check if the jwt is not valid
+        if (jwtSplit.Length != 3) throw new Exception("Jwt is not valid.");
+        // Return the signature and header payload
+        return ($"{jwtSplit[0]}.{jwtSplit[1]}", jwtSplit[2]);
+    }
+
+    /// <summary>
+    /// DecodeJWTToDictionary
+    /// </summary>
+    /// <param name="jwtToken"></param>
+    /// <returns></returns>
+    private static Dictionary<string, object> DecodeJWTToDictionary(string jwtToken)
+    {
+        // Giải mã JWT
+        var handler = new JwtSecurityTokenHandler();
+        var jsonToken = handler.ReadJwtToken(jwtToken);
+
+        // Lấy payload từ JWT
+        var payload = jsonToken.Payload;
+
+        // Chuyển Payload thành Dictionary<string, object>
+        var result = new Dictionary<string, object>();
+
+        foreach (var claim in payload)
+        {
+            // Kiểm tra nếu giá trị là chuỗi JSON (chứa dấu { hoặc [) và chuyển nó thành đối tượng hoặc mảng
+            if (claim.Value is string value && (value.StartsWith("{") || value.StartsWith("[")))
+            {
+                try
+                {
+                    // Cố gắng giải mã chuỗi thành đối tượng hoặc mảng JSON
+                    var jsonObject = JsonConvert.DeserializeObject(value) ?? throw new Exception("Json object is invalid!");
+                    result[claim.Key] = jsonObject;
+                }
+                catch (JsonException)
+                {
+                    // Nếu không thể giải mã, giữ lại giá trị chuỗi ban đầu
+                    result[claim.Key] = value;
+                }
             }
             else
             {
-                // Check if the refresh token expired time is empty and set it to 30 days
-                if (string.IsNullOrEmpty(RefreshTokenExpiredTime)) RefreshTokenExpiredTime = "30d";
-                datetimeOffsetDataCompareStr = RefreshTokenExpiredTime;
+                // Nếu không phải chuỗi JSON, giữ lại giá trị ban đầu
+                result[claim.Key] = claim.Value;
             }
-
-            // Convert the expiration time to Unix time
-            var datetimeOffsetDataCompare = _stringProvider.GenerateDateTimeOffsetFromString(datetimeOffsetDataCompareStr).ToUnixTimeSeconds();
-
-            // Generate payload
-            var payload = new JwtPayload
-            {
-                Audience = audience,
-                Issuer = issuer,
-                AllowedOrigins = allowedOrigins,
-                GroupAccess = groupAccess,
-                Expiration = datetimeOffsetDataCompare,
-                ResourceAccess = resourceAccess,
-                Email = account.Email,
-                Name = account.Fullname
-            };
-
-            // Generate the jwt
-            var jwtHeader = JsonConvert.SerializeObject(header);
-            var jwtPayload = JsonConvert.SerializeObject(payload);
-            var jwtHeaderBase64 = _hashProvider.Base64Encode(jwtHeader);
-            var jwtPayloadBase64 = _hashProvider.Base64Encode(jwtPayload);
-            var jwtSignature = _hashProvider.HashSHA512($"{jwtHeaderBase64}.{jwtPayloadBase64}", PrivateKeyFilePath);
-            return $"{jwtHeaderBase64}.{jwtPayloadBase64}.{jwtSignature}";
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message);
-            _logger.LogError(ex.StackTrace);
-            throw new Exception(ex.Message);
-        }
+
+        return result;
     }
 
-    /// <inheritdoc/>
-    public bool ValidateJwt(string jwt, JwtType type)
+    /// <summary>
+    /// ConvertToVolcanionJwtPayload
+    /// </summary>
+    /// <param name="dictionary"></param>
+    /// <returns></returns>
+    private static VolcanionJwtPayload ConvertToVolcanionJwtPayload(Dictionary<string, object> dictionary)
     {
-        try
+        var payload = new VolcanionJwtPayload();
+
+        // Duyệt qua từng trường trong Dictionary và chuyển đổi vào đối tượng VolcanionJwtPayload
+        foreach (var kvp in dictionary)
         {
-            // Validate the jwt
-            // Check if the jwt is empty
-            if (string.IsNullOrEmpty(jwt))
+            switch (kvp.Key)
             {
-                throw new Exception("Jwt is empty.");
+                case "Expiration":
+                    payload.Expiration = Convert.ToInt64(kvp.Value);
+                    break;
+
+                case "IssuedAt":
+                    payload.IssuedAt = Convert.ToInt64(kvp.Value);
+                    break;
+
+                case "TokenId":
+                    payload.TokenId = Convert.ToString(kvp.Value) ?? string.Empty;
+                    break;
+
+                case "Issuer":
+                    payload.Issuer = Convert.ToString(kvp.Value) ?? string.Empty;
+                    break;
+
+                case "Audience":
+                    payload.Audience = Convert.ToString(kvp.Value) ?? string.Empty;
+                    break;
+
+                case "Type":
+                    payload.Type = Convert.ToString(kvp.Value) ?? string.Empty;
+                    break;
+
+                case "SessionId":
+                    payload.SessionId = Convert.ToString(kvp.Value) ?? string.Empty;
+                    break;
+
+                case "AllowedOrigins":
+                    // Nếu AllowedOrigins là chuỗi JSON, chúng ta phải giải mã nó thành List<string>
+                    payload.AllowedOrigins = JsonConvert.DeserializeObject<List<string>>(kvp.Value.ToString());
+                    break;
+
+                case "ResourceAccess":
+                    // Nếu ResourceAccess là chuỗi JSON, chúng ta cần giải mã nó thành đối tượng ResourceAccess
+                    payload.ResourceAccess = JsonConvert.DeserializeObject<ResourceAccess>(kvp.Value.ToString());
+                    break;
+
+                case "GroupAccess":
+                    // Nếu GroupAccess là chuỗi JSON, giải mã nó thành List<string>
+                    payload.GroupAccess = JsonConvert.DeserializeObject<List<string>>(kvp.Value.ToString());
+                    break;
+
+                case "Name":
+                    payload.Name = Convert.ToString(kvp.Value) ?? string.Empty;
+                    break;
+
+                case "Email":
+                    payload.Email = Convert.ToString(kvp.Value) ?? string.Empty;
+                    break;
+
+                default:
+                    // Xử lý các trường khác (nếu có)
+                    break;
             }
-            
-            // Check if the public key file path is empty
-            if (string.IsNullOrEmpty(PublicKeyFilePath))
-            {
-                throw new Exception("Public key file path is not set.");
-            }
-
-            var signature = SplitJwt(jwt).signature;
-            var headerPayload = SplitJwt(jwt).headerPayload;
-
-            if (!_hashProvider.VerifySignature(jwt, headerPayload, PublicKeyFilePath))
-            {
-                throw new Exception("Jwt signature is not valid.");
-            }
-
-            var datetimeOffsetData = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            var datetimeOffsetDataCompareStr = "";
-
-            if (type == JwtType.AccessToken)
-            {
-                // Check if the access token expired time is empty and set it to 10 minutes
-                if (string.IsNullOrEmpty(AccessTokenExpiredTime)) AccessTokenExpiredTime = "10m";
-                datetimeOffsetDataCompareStr = AccessTokenExpiredTime;
-            }
-            else
-            {
-                // Check if the refresh token expired time is empty and set it to 30 days
-                if (string.IsNullOrEmpty(RefreshTokenExpiredTime)) RefreshTokenExpiredTime = "30d";
-                datetimeOffsetDataCompareStr = RefreshTokenExpiredTime;
-            }
-
-            var datetimeOffsetDataCompare = _stringProvider.GenerateDateTimeOffsetFromString(datetimeOffsetDataCompareStr).ToUnixTimeSeconds();
-            var payload = DecodeJwt(headerPayload).payload;
-
-            // Check if the jwt is expired
-            if (datetimeOffsetDataCompare < payload!.Expiration) throw new Exception("Jwt is expired.");
-            var sessionId = payload.SessionId;
-            var cacheSessionId = _redisCacheProvider.GetCacheAsync<string>(sessionId).Result;
-
-            if (cacheSessionId.Equals("Expired")) throw new Exception("Session is expired.");
-
-            return true;
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message);
-            _logger.LogError(ex.StackTrace);
-            throw new Exception(ex.Message);
-        }
-    }
 
-    /// <inheritdoc/>
-    public (string signature, string headerPayload) SplitJwt(string jwt)
-    {
-        try
-        {
-            // Split the jwt
-            var jwtSplit = jwt.Split('.');
-            // Check if the jwt is not valid
-            if (jwtSplit.Length != 3) throw new Exception("Jwt is not valid.");
-            // Return the signature and header payload
-            return (jwtSplit[2], $"{jwtSplit[0]}.{jwtSplit[1]}");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message);
-            _logger.LogError(ex.StackTrace);
-            throw new Exception(ex.Message);
-        }
+        return payload;
     }
 }

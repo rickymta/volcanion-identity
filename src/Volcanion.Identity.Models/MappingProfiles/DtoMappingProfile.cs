@@ -8,10 +8,10 @@ public class DtoMappingProfile : Profile
 {
     public DtoMappingProfile()
     {
-        CreateMap<Account, AccountRequestDTO>();
-        CreateMap<Permission, PermissionRequestDTO>();
-        CreateMap<GrantPermission, GrantPermissionRequestDTO>();
-        CreateMap<RolePermission, RolePermissionRequestDTO>();
-        CreateMap<Role, RoleRequestDTO>();
+        CreateMap<AccountRequestDTO, Account>();
+        CreateMap<PermissionRequestDTO, Permission>();
+        CreateMap<GrantPermissionRequestDTO, GrantPermission>();
+        CreateMap<RolePermissionRequestDTO, RolePermission>();
+        CreateMap<RoleRequestDTO, Role>();
     }
 }
