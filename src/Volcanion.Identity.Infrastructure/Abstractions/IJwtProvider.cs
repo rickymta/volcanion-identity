@@ -21,7 +21,7 @@ public interface IJwtProvider
     /// <param name="type"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public string GenerateJwt(Account account, string audience, string issuer, List<string> allowedOrigins, List<string> groupAccess, ResourceAccess resourceAccess, JwtType type);
+    public string GenerateJwt(Account account, string audience, string issuer, List<string> allowedOrigins, List<string> groupAccess, ResourceAccess resourceAccess, JwtType type, string sessionId);
 
     /// <summary>
     /// ValidateJwt
@@ -30,7 +30,7 @@ public interface IJwtProvider
     /// <param name="type"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public bool ValidateJwt(string jwt, JwtType type);
+    public bool ValidateJwt(string jwt, JwtType? type);
 
     /// <summary>
     /// DecodeJwt
@@ -38,7 +38,7 @@ public interface IJwtProvider
     /// <param name="token"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public (JwtHeader? header, JwtPayload? payload) DecodeJwt(string token);
+    public (VolcanionJwtHeader? header, VolcanionJwtPayload? payload) DecodeJwt(string token);
 
     /// <summary>
     /// SplitJwt
@@ -46,5 +46,5 @@ public interface IJwtProvider
     /// <param name="jwt"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public (string signature, string headerPayload) SplitJwt(string jwt);
+    public (string headerPayload, string signature) SplitJwt(string jwt);
 }

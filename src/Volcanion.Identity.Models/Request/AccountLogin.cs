@@ -16,11 +16,6 @@ public class AccountLogin
     public string Password { get; set; } = null!;
 
     /// <summary>
-    /// IpAddress
-    /// </summary>
-    public string IpAddress { get; set; } = null!;
-
-    /// <summary>
     /// RememberMe
     /// </summary>
     public bool RememberMe { get; set; } = false;

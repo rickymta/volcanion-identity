@@ -1,5 +1,6 @@
 ﻿using Volcanion.Core.Infrastructure.Abstractions;
 using Volcanion.Identity.Models.Entities;
+using Volcanion.Identity.Models.Response.BOs;
 
 namespace Volcanion.Identity.Infrastructure.Abstractions;
 
@@ -13,5 +14,5 @@ public interface IGrantPermissionRepository : IGenericRepository<GrantPermission
     /// </summary>
     /// <param name="accountId"></param>
     /// <returns></returns>
-    Task<GrantPermission?> GetGrantPermissionByAccountId(Guid accountId);
+    Task<List<GrantPermissionResponseBO>?> GetGrantPermissionByAccountId(Guid accountId);
 }

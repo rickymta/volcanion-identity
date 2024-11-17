@@ -10,11 +10,14 @@
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.Routing.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Volcanion.Core.Common" Version="1.0.1" />
-    <PackageReference Include="Volcanion.Core.Infrastructure" Version="1.0.0" />
+    <!--<PackageReference Include="Volcanion.Core.Common" Version="1.0.1" />-->
+    <!--<PackageReference Include="Volcanion.Core.Infrastructure" Version="1.0.0" />-->
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Gitlab\volcanion-core\src\Volcanion.Core.Common\Volcanion.Core.Common.csproj" />
+    <ProjectReference Include="..\..\..\..\..\Gitlab\volcanion-core\src\Volcanion.Core.Infrastructure\Volcanion.Core.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\..\..\Gitlab\volcanion-core\src\Volcanion.Core.Presentation\Volcanion.Core.Presentation.csproj" />
     <ProjectReference Include="..\Volcanion.Identity.Models\Volcanion.Identity.Models.csproj" />
   </ItemGroup>
 

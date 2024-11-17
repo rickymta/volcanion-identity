@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Volcanion.Core.Presentation.Controllers;
 using Volcanion.Identity.Handlers.Abstractions;
@@ -14,6 +15,7 @@ namespace Volcanion.Identity.Presentation.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
 [ApiVersion("1.0")]
+[AllowAnonymous]
 public class RoleController : BaseController
 {
     /// <summary>
@@ -71,6 +73,18 @@ public class RoleController : BaseController
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(Guid id)
     {
+        var result = await _roleHandler.SoftDeleteAsync(id);
+        return Ok(SuccessData(result));
+    }
+
+    /// <summary>
+    /// HardDeleteAsync
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpDelete("hard-delete/{id}")]
+    public async Task<IActionResult> HardDeleteAsync(Guid id)
+    {
         var result = await _roleHandler.DeleteAsync(id);
         return Ok(SuccessData(result));
     }
@@ -83,8 +97,7 @@ public class RoleController : BaseController
     public async Task<IActionResult> GetAllAsync()
     {
         var result = await _roleHandler.GetAllAsync();
-        var data = _mapper.Map<IEnumerable<RoleResponseBO>>(result);
-        return Ok(SuccessData(data));
+        return Ok(SuccessData(result));
     }
 
     /// <summary>
@@ -96,7 +109,6 @@ public class RoleController : BaseController
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
         var result = await _roleHandler.GetAsync(id);
-        var data = _mapper.Map<RoleResponseBO>(result);
-        return Ok(SuccessData(data));
+        return Ok(SuccessData(result));
     }
 }

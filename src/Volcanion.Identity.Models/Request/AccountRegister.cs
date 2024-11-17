@@ -36,11 +36,6 @@ public class AccountRegister
     public DateTime? Birthday { get; set; }
 
     /// <summary>
-    /// IpAddress
-    /// </summary>
-    public string IpAddress { get; set; } = null!;
-
-    /// <summary>
     /// Issuer
     /// </summary>
     public string Issuer { get; set; } = null!;

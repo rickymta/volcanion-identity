@@ -20,10 +20,10 @@ public class GrantPermission : BaseEntity
     /// <summary>
     /// Account
     /// </summary>
-    public Account Account { get; set; }
+    public Account Account { get; set; } = null!;
 
     /// <summary>
     /// RolePermissions
     /// </summary>
-    public ICollection<RolePermission> RolePermissions { get; set; }
+    public RolePermission RolePermission { get; set; } = null!;
 }

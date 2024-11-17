@@ -15,6 +15,10 @@ using Volcanion.Identity.Services;
 using Serilog;
 using System.Net;
 using Volcanion.Identity.Models.Setting;
+using StackExchange.Redis;
+using Volcanion.Core.Common.Abstractions;
+using Volcanion.Core.Common.Implementations;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,10 +41,12 @@ builder.Services.AddSwaggerGen();
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(DtoMappingProfile));
+builder.Services.AddAutoMapper(typeof(BoMappingProfile));
 
 // Add Redis
-builder.Services.Configure<RedisOptions>(builder.Configuration.GetSection("Redis"));
-builder.Services.AddRedisCacheService(builder.Configuration.GetSection("Redis"));
+var redisConfiguration = builder.Configuration.GetSection("Redis:ConnectionString").Value;
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConfiguration!));
+builder.Services.AddSingleton<IRedisCacheProvider, RedisCacheProvider>();
 
 // Add JWT Authentication settings
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
@@ -56,6 +62,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowOrigins", policy =>
     {
         policy.WithOrigins(origins).WithHeaders(headers).WithMethods(methods);
+        //policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
     });
 });
 
@@ -73,8 +80,13 @@ builder.Services.AddApiVersioning(x =>
 });
 
 // Add Entity Framework DBContext
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString, b => b.MigrationsAssembly("Volcanion.Identity.Presentation")));
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    //var connectionString = builder.Configuration.GetConnectionString("PostgreSQLConnection");
+    //options.UseNpgsql(connectionString, b => b.MigrationsAssembly("Volcanion.Identity.Presentation"));
+    var connectionString = builder.Configuration.GetConnectionString("MySQLConnection");
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), b => b.MigrationsAssembly("Volcanion.Identity.Presentation"));
+});
 
 // Use serilog
 configureLogging();

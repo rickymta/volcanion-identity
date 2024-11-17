@@ -14,9 +14,4 @@ public class RolePermissionRequestDTO
     /// PermissionId
     /// </summary>
     public Guid PermissionId { get; set; }
-
-    /// <summary>
-    /// GrantPermissionId
-    /// </summary>
-    public Guid GrantPermissionId { get; set; }
 }

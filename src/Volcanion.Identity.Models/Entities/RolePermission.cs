@@ -18,22 +18,17 @@ public class RolePermission : BaseEntity
     public Guid PermissionId { get; set; }
 
     /// <summary>
-    /// GrantPermissionId
-    /// </summary>
-    public Guid GrantPermissionId { get; set; }
-
-    /// <summary>
     /// Role
     /// </summary>
-    public Role Role { get; set; }
+    public Role Role { get; set; } = null!;
 
     /// <summary>
     /// Permission
     /// </summary>
-    public Permission Permission { get; set; }
+    public Permission Permission { get; set; } = null!;
 
     /// <summary>
     /// GrantPermission
     /// </summary>
-    public GrantPermission GrantPermission { get; set; }
+    public ICollection<GrantPermission> GrantPermissions { get; set; } = [];
 }

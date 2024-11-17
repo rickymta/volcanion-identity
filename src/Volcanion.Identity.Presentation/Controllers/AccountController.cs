@@ -5,7 +5,6 @@ using Volcanion.Core.Presentation.Controllers;
 using Volcanion.Identity.Handlers.Abstractions;
 using Volcanion.Identity.Models.Entities;
 using Volcanion.Identity.Models.Request.DTOs;
-using Volcanion.Identity.Models.Response.BOs;
 
 namespace Volcanion.Identity.Presentation.Controllers;
 
@@ -15,7 +14,6 @@ namespace Volcanion.Identity.Presentation.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
 [ApiVersion("1.0")]
-[VolcanionAuth(["Account.*"])]
 public class AccountController : BaseController
 {
     /// <summary>
@@ -73,8 +71,21 @@ public class AccountController : BaseController
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete("{id}")]
-    [VolcanionAuth(["Account.All", "Account.Delete"])]
+    [VolcanionAuth(["Account.All", "Account.SoftDelete"])]
     public async Task<IActionResult> DeleteAsync(Guid id)
+    {
+        var result = await _accountHandler.SoftDeleteAsync(id);
+        return Ok(SuccessData(result));
+    }
+
+    /// <summary>
+    /// HardDeleteAsync
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpDelete("hard-delete/{id}")]
+    [VolcanionAuth(["Account.All", "Account.HardDelete"])]
+    public async Task<IActionResult> HardDeleteAsync(Guid id)
     {
         var result = await _accountHandler.DeleteAsync(id);
         return Ok(SuccessData(result));
@@ -89,8 +100,7 @@ public class AccountController : BaseController
     public async Task<IActionResult> GetAllAsync()
     {
         var result = await _accountHandler.GetAllAsync();
-        var data = _mapper.Map<IEnumerable<AccountResponseBO>>(result);
-        return Ok(SuccessData(data));
+        return Ok(SuccessData(result));
     }
 
     /// <summary>
@@ -103,7 +113,6 @@ public class AccountController : BaseController
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
         var result = await _accountHandler.GetAsync(id);
-        var data = _mapper.Map<AccountResponseBO>(result);
-        return Ok(SuccessData(data));
+        return Ok(SuccessData(result));
     }
 }
