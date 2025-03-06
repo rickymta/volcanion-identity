@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Routing;
 using System.Reflection;
 using Volcanion.Core.Models.Attributes;
 using Volcanion.Core.Models.Enums;
@@ -96,6 +97,7 @@ public class VolcanionAuthMiddleware
                     // Compare roles in claims with roles in attribute
                     if (rolesInClaims != null && VerifyRole([.. rolesInClaims!], roleFromAttribute))
                     {
+                        context.GetRouteData().Values.Add("AccountId", payload?.TokenId);
                         await _next(context);
                         return;
                     }

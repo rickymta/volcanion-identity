@@ -1,5 +1,6 @@
 ﻿using Volcanion.Core.Infrastructure.Abstractions;
 using Volcanion.Identity.Models.Entities;
+using Volcanion.Identity.Models.Filters;
 using Volcanion.Identity.Models.Response.BOs;
 
 namespace Volcanion.Identity.Infrastructure.Abstractions;

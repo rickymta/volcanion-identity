@@ -6,6 +6,9 @@ using Volcanion.Identity.Models.Request;
 
 namespace Volcanion.Identity.Presentation.Controllers;
 
+/// <summary>
+/// AuthController
+/// </summary>
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
 [ApiVersion("1.0")]
@@ -18,19 +21,19 @@ public class AuthController : BaseController
     private readonly ILogger<AuthController> _logger;
 
     /// <summary>
-    /// IAccountHandler instance
+    /// IAuthHandler instance
     /// </summary>
-    private readonly IAccountHandler _accountHandler;
+    private readonly IAuthHandler _authHandler;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="logger"></param>
-    /// <param name="accountHandler"></param>
-    public AuthController(ILogger<AuthController> logger, IAccountHandler accountHandler)
+    /// <param name="authHandler"></param>
+    public AuthController(ILogger<AuthController> logger, IAuthHandler authHandler)
     {
         _logger = logger;
-        _accountHandler = accountHandler;
+        _authHandler = authHandler;
     }
 
     /// <summary>
@@ -42,7 +45,7 @@ public class AuthController : BaseController
     [Route("register")]
     public async Task<IActionResult> Register(AccountRegister account)
     {
-        var result = await _accountHandler.Register(account);
+        var result = await _authHandler.Register(account);
         return Ok(SuccessData(result));
     }
 
@@ -55,7 +58,7 @@ public class AuthController : BaseController
     [Route("login")]
     public async Task<IActionResult> Login(AccountLogin account)
     {
-        var result = await _accountHandler.Login(account);
+        var result = await _authHandler.Login(account);
         if (result == null) return BadRequest(ErrorMessage("Invalid username or password!"));
         return Ok(SuccessData(result));
     }
@@ -69,7 +72,7 @@ public class AuthController : BaseController
     [Route("refresh-token")]
     public async Task<IActionResult> RefreshToken(TokenRequest request)
     {
-        var result = await _accountHandler.RefreshToken(request);
+        var result = await _authHandler.RefreshToken(request);
         return Ok(SuccessData(result));
     }
 }

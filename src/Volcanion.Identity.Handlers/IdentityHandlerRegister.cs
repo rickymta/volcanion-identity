@@ -15,6 +15,7 @@ public static class IdentityHandlerRegister
     /// <param name="services"></param>
     public static void RegisterIdentityHandler(this IServiceCollection services)
     {
+        services.AddTransient<IAuthHandler, AuthHandler>();
         services.AddTransient<IAccountHandler, AccountHandler>();
         services.AddTransient<IGrantPermissionHandler, GrantPermissionHandler>();
         services.AddTransient<IPermissionHandler, PermissionHandler>();

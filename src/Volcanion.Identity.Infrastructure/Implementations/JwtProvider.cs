@@ -85,24 +85,24 @@ internal class JwtProvider : IJwtProvider
     }
 
     /// <inheritdoc/>
-    public string GenerateJwt(Account account, string audience, string issuer, List<string> allowedOrigins, List<string> groupAccess, ResourceAccess resourceAccess, JwtType type, string sessionId)
+    public string GenerateJwt(object account, string audience, string issuer, List<string> allowedOrigins, ResourceAccess resourceAccess, JwtType type, string sessionId)
     {
         // Determine expiration time
         var expirationTimeStr = type == JwtType.AccessToken ? AccessTokenExpiredTime ?? "10m" : RefreshTokenExpiredTime ?? "30d";
         var expirationUnixTime = _stringProvider.GenerateDateTimeOffsetFromString(expirationTimeStr).ToUnixTimeSeconds();
+        var tokenId = Guid.NewGuid().ToString();
 
         // Generate payload
         var payload = new VolcanionJwtPayload
         {
+            TokenId = tokenId,
             Audience = audience,
             Issuer = issuer,
             AllowedOrigins = allowedOrigins,
-            GroupAccess = groupAccess,
             Expiration = expirationUnixTime,
+            SessionId = sessionId,
             ResourceAccess = resourceAccess,
-            Email = account.Email,
-            Name = account.Fullname,
-            SessionId = sessionId
+            Data = account
         };
 
         // Serialize header and payload
@@ -254,11 +254,6 @@ internal class JwtProvider : IJwtProvider
                 case "ResourceAccess":
                     // Nếu ResourceAccess là chuỗi JSON, chúng ta cần giải mã nó thành đối tượng ResourceAccess
                     payload.ResourceAccess = JsonConvert.DeserializeObject<ResourceAccess>(kvp.Value.ToString());
-                    break;
-
-                case "GroupAccess":
-                    // Nếu GroupAccess là chuỗi JSON, giải mã nó thành List<string>
-                    payload.GroupAccess = JsonConvert.DeserializeObject<List<string>>(kvp.Value.ToString());
                     break;
 
                 case "Name":

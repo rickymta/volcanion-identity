@@ -15,6 +15,7 @@ public static class IdentityServiceRegister
     /// <param name="services"></param>
     public static void RegisterIdentityService(this IServiceCollection services)
     {
+        services.AddTransient<IAuthService, AuthService>();
         services.AddTransient<IAccountService, AccountService>();
         services.AddTransient<IGrantPermissionService, GrantPermissionService>();
         services.AddTransient<IPermissionService, PermissionService>();
