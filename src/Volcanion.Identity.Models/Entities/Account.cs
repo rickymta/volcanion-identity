@@ -1,4 +1,5 @@
-﻿using Volcanion.Core.Models.Entities;
+﻿using System.Text.Json.Serialization;
+using Volcanion.Core.Models.Entities;
 
 namespace Volcanion.Identity.Models.Entities;
 
@@ -20,7 +21,7 @@ public class Account : BaseEntity
     /// <summary>
     /// Password
     /// </summary>
-    public string Password { get; set; } = null!;
+    public string? Password { get; set; }
 
     /// <summary>
     /// Avatar
@@ -38,7 +39,13 @@ public class Account : BaseEntity
     public string? PhoneNumber { get; set; }
 
     /// <summary>
+    /// Birthday
+    /// </summary>
+    public DateTime? Birthday { get; set; }
+
+    /// <summary>
     /// GrantPermissions
     /// </summary>
+    [JsonIgnore]
     public ICollection<GrantPermission> GrantPermissions { get; set; } = [];
 }

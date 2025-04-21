@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Volcanion.Core.Models.Attributes;
 using Volcanion.Core.Presentation.Controllers;
 using Volcanion.Identity.Handlers.Abstractions;
 using Volcanion.Identity.Models.Request;
@@ -66,13 +67,15 @@ public class AuthController : BaseController
     /// <summary>
     /// RefreshToken
     /// </summary>
-    /// <param name="account"></param>
+    /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost]
     [Route("refresh-token")]
+    [VolcanionAuth([])]
     public async Task<IActionResult> RefreshToken(TokenRequest request)
     {
         var result = await _authHandler.RefreshToken(request);
+        if (result == null) return BadRequest(ErrorMessage("There're error while handle request! Please try again!"));
         return Ok(SuccessData(result));
     }
 }

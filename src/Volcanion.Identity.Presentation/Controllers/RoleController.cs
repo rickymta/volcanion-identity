@@ -5,7 +5,6 @@ using Volcanion.Core.Presentation.Controllers;
 using Volcanion.Identity.Handlers.Abstractions;
 using Volcanion.Identity.Models.Entities;
 using Volcanion.Identity.Models.Request.DTOs;
-using Volcanion.Identity.Models.Response.BOs;
 
 namespace Volcanion.Identity.Presentation.Controllers;
 

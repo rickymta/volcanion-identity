@@ -23,7 +23,7 @@ public class RoleResponseBO
     /// <summary>
     /// Name
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     /// <summary>
     /// CreatedAt

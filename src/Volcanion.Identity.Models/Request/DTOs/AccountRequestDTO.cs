@@ -43,5 +43,5 @@ public class AccountRequestDTO
     /// <summary>
     /// IsActived
     /// </summary>
-    public bool? IsActived { get; set; }
+    public bool? IsActived { get; set; } = true;
 }

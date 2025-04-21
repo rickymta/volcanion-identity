@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Gitlab\volcanion-core\src\Volcanion.Core.Models\Volcanion.Core.Models.csproj" />
+    <ProjectReference Include="..\..\..\volcanion-core\src\Volcanion.Core.Models\Volcanion.Core.Models.csproj" />
   </ItemGroup>
 
 </Project>

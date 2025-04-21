@@ -19,6 +19,13 @@ public interface IAccountRepository : IGenericRepository<Account>
     Task<Account?> GetAccountByEmail(string email);
 
     /// <summary>
+    /// GetAccountByPhoneNumberAsync
+    /// </summary>
+    /// <param name="phoneNumber"></param>
+    /// <returns></returns>
+    Task<Account?> GetAccountByPhoneNumberAsync(string phoneNumber);
+
+    /// <summary>
     /// FilterDataPagingAsync
     /// </summary>
     /// <param name="filter"></param>
