@@ -44,13 +44,13 @@ internal class AccountHandler : BaseHandler<Account, IAccountService>, IAccountH
         // Check if filter by address is not null or empty then add to filters
         if (!string.IsNullOrEmpty(filter.Address))
         {
-            filters.Add(x => x.Address.Contains(filter.Address));
+            filters.Add(x => x.Address!.Contains(filter.Address));
         }
 
         // Check if filter by phone number is not null or empty then add to filters
         if (!string.IsNullOrEmpty(filter.PhoneNumber))
         {
-            filters.Add(x => x.PhoneNumber.Contains(filter.PhoneNumber));
+            filters.Add(x => x.PhoneNumber!.Contains(filter.PhoneNumber));
         }
 
         // Get all filters and combine them

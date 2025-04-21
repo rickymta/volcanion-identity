@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Volcanion.Core.Common;
 using Volcanion.Core.Common.Providers;
 using Volcanion.Core.Presentation.Middlewares;
@@ -15,7 +13,12 @@ using Volcanion.Identity.Models.Setting;
 using StackExchange.Redis;
 using Volcanion.Core.Common.Abstractions;
 using Volcanion.Core.Common.Implementations;
-using Volcanion.Core.Presentation.Middlewares.MultipleLanguage;
+using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Volcanion.Core.Presentation.Helpers;
+//using Volcanion.Core.Presentation.Middlewares.MultipleLanguage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,14 +30,20 @@ builder.Services.RegisterIdentityInfrastructure();
 builder.Services.RegisterIdentityService();
 builder.Services.RegisterIdentityHandler();
 
-// Add service LocalizationService for multiple language
-builder.Services.AddSingleton<LocalizationService>();
+//// Add service LocalizationService for multiple language
+//builder.Services.AddSingleton<LocalizationService>();
 
 // Add controller with json options
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
-});
+builder.Services.AddControllers(options =>
+    {
+        options.Conventions.Add(new RouteTokenTransformerConvention(
+            new SlugifyRouteTransformer()
+        ));
+    })
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+    });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -62,8 +71,8 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowOrigins", policy =>
     {
-        policy.WithOrigins(origins).WithHeaders(headers).WithMethods(methods);
-        //policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        //policy.WithOrigins(origins).WithHeaders(headers).WithMethods(methods);
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
     });
 });
 
@@ -83,10 +92,11 @@ builder.Services.AddApiVersioning(x =>
 // Add Entity Framework DBContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
+    var assembly = Assembly.GetExecutingAssembly();
     //var connectionString = builder.Configuration.GetConnectionString("PostgreSQLConnection");
     //options.UseNpgsql(connectionString, b => b.MigrationsAssembly("Volcanion.Identity.Presentation"));
     var connectionString = builder.Configuration.GetConnectionString("MySQLConnection");
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), b => b.MigrationsAssembly("Volcanion.Identity.Presentation"));
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), b => b.MigrationsAssembly(assembly.GetName().Name));
 });
 
 // Use serilog
@@ -100,7 +110,7 @@ app.UseCors("AllowOrigins");
 
 app.UseGlobalErrorHandlingMiddleware();
 app.UseVolcanionAuthMiddleware();
-app.UseMiddleware<CultureMiddleware>();
+//app.UseMiddleware<CultureMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -132,6 +142,8 @@ static void configureLogging()
     {
         LogProvider.LoggerSetting(configuration, environment);
     }
-
-    Console.WriteLine("configuration is null");
+    else
+    {
+        Console.WriteLine("configuration is null");
+    }
 }

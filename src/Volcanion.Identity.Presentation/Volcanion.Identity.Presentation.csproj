@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
@@ -6,10 +6,13 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UserSecretsId>795ac131-9aa1-4f71-9ccb-66bfbf192f76</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);1591</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
@@ -37,6 +40,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\volcanion-core\src\Volcanion.Core.Presentation\Volcanion.Core.Presentation.csproj" />
 		<ProjectReference Include="..\Volcanion.Identity.Handlers\Volcanion.Identity.Handlers.csproj" />
 		<ProjectReference Include="..\Volcanion.Identity.Infrastructure\Volcanion.Identity.Infrastructure.csproj" />
 		<ProjectReference Include="..\Volcanion.Identity.Models\Volcanion.Identity.Models.csproj" />

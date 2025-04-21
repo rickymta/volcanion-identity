@@ -54,4 +54,11 @@ internal class AccountRepository : BaseRepository<Account, ApplicationDbContext>
         var account = await _context.Account.FirstOrDefaultAsync(x => x.Email.Equals(email));
         return account;
     }
+
+    /// <inheritdoc/>
+    public async Task<Account?> GetAccountByPhoneNumberAsync(string phoneNumber)
+    {
+        var account = await _context.Account.FirstOrDefaultAsync(x => x.PhoneNumber!.Equals(phoneNumber));
+        return account;
+    }
 }

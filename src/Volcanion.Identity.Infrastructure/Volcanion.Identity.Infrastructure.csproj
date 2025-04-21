@@ -15,9 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Gitlab\volcanion-core\src\Volcanion.Core.Common\Volcanion.Core.Common.csproj" />
-    <ProjectReference Include="..\..\..\..\..\Gitlab\volcanion-core\src\Volcanion.Core.Infrastructure\Volcanion.Core.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\..\..\..\Gitlab\volcanion-core\src\Volcanion.Core.Presentation\Volcanion.Core.Presentation.csproj" />
+    <ProjectReference Include="..\..\..\volcanion-core\src\Volcanion.Core.Common\Volcanion.Core.Common.csproj" />
+    <ProjectReference Include="..\..\..\volcanion-core\src\Volcanion.Core.Infrastructure\Volcanion.Core.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\volcanion-core\src\Volcanion.Core.Models\Volcanion.Core.Models.csproj" />
+    <ProjectReference Include="..\..\..\volcanion-core\src\Volcanion.Core.Presentation\Volcanion.Core.Presentation.csproj" />
     <ProjectReference Include="..\Volcanion.Identity.Models\Volcanion.Identity.Models.csproj" />
   </ItemGroup>
 

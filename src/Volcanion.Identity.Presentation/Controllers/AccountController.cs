@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Volcanion.Core.Common.Abstractions;
 using Volcanion.Core.Models.Attributes;
 using Volcanion.Core.Presentation.Controllers;
 using Volcanion.Identity.Handlers.Abstractions;
@@ -24,6 +25,11 @@ public class AccountController : BaseController
     private readonly IAccountHandler _accountHandler;
 
     /// <summary>
+    /// IHashProvider instance
+    /// </summary>
+    private readonly IHashProvider _hashProvider;
+
+    /// <summary>
     /// IMapper instance
     /// </summary>
     private readonly IMapper _mapper;
@@ -31,11 +37,13 @@ public class AccountController : BaseController
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="AccountHandler"></param>
+    /// <param name="accountHandler"></param>
+    /// <param name="hashProvider"></param>
     /// <param name="mapper"></param>
-    public AccountController(IAccountHandler AccountHandler, IMapper mapper)
+    public AccountController(IAccountHandler accountHandler, IHashProvider hashProvider, IMapper mapper)
     {
-        _accountHandler = AccountHandler;
+        _accountHandler = accountHandler;
+        _hashProvider = hashProvider;
         _mapper = mapper;
     }
 
@@ -44,11 +52,12 @@ public class AccountController : BaseController
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    [HttpPost]
+    [HttpPost("create")]
     [VolcanionAuth(["Account.All", "Account.Create"])]
     public async Task<IActionResult> CreateAsync(AccountRequestDTO request)
     {
         var account = _mapper.Map<Account>(request);
+        account.Password = _hashProvider.HashPassword(request.Password);
         var result = await _accountHandler.CreateAsync(account);
         return Ok(SuccessData(result));
     }
@@ -58,7 +67,7 @@ public class AccountController : BaseController
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    [HttpPut]
+    [HttpPut("update")]
     [VolcanionAuth(["Account.All", "Account.Update"])]
     public async Task<IActionResult> UpdateAsync(AccountRequestDTO request)
     {
@@ -72,7 +81,7 @@ public class AccountController : BaseController
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    [HttpDelete("{id}")]
+    [HttpDelete("soft-delete")]
     [VolcanionAuth(["Account.All", "Account.SoftDelete"])]
     public async Task<IActionResult> DeleteAsync(Guid id)
     {
@@ -85,7 +94,7 @@ public class AccountController : BaseController
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    [HttpDelete("hard-delete/{id}")]
+    [HttpDelete("hard-delete")]
     [VolcanionAuth(["Account.All", "Account.HardDelete"])]
     public async Task<IActionResult> HardDeleteAsync(Guid id)
     {
@@ -110,7 +119,7 @@ public class AccountController : BaseController
     /// GetAllAsync
     /// </summary>
     /// <returns></returns>
-    [HttpGet]
+    [HttpGet("get-all")]
     [VolcanionAuth(["Account.All", "Account.GetAll"])]
     public async Task<IActionResult> GetAllAsync()
     {
@@ -124,7 +133,7 @@ public class AccountController : BaseController
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    [HttpGet("{id}")]
+    [HttpGet("get-by-id")]
     [VolcanionAuth(["Account.All", "Account.GetOne"])]
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {

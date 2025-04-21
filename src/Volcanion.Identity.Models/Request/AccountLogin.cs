@@ -6,9 +6,9 @@
 public class AccountLogin
 {
     /// <summary>
-    /// LoginName
+    /// PhoneNumber
     /// </summary>
-    public string LoginName { get; set; } = null!;
+    public string PhoneNumber { get; set; } = null!;
 
     /// <summary>
     /// Password

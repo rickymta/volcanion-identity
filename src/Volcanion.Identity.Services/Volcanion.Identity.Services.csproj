@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Gitlab\volcanion-core\src\Volcanion.Core.Presentation\Volcanion.Core.Presentation.csproj" />
-    <ProjectReference Include="..\..\..\..\..\Gitlab\volcanion-core\src\Volcanion.Core.Services\Volcanion.Core.Services.csproj" />
+    <ProjectReference Include="..\..\..\volcanion-core\src\Volcanion.Core.Presentation\Volcanion.Core.Presentation.csproj" />
+    <ProjectReference Include="..\..\..\volcanion-core\src\Volcanion.Core.Services\Volcanion.Core.Services.csproj" />
     <ProjectReference Include="..\Volcanion.Identity.Infrastructure\Volcanion.Identity.Infrastructure.csproj" />
     <ProjectReference Include="..\Volcanion.Identity.Models\Volcanion.Identity.Models.csproj" />
   </ItemGroup>
