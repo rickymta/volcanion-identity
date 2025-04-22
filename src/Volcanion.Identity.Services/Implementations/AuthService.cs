@@ -62,6 +62,11 @@ internal class AuthService : IAuthService
     private string AccessTokenExpiredTime { get; set; }
 
     /// <summary>
+    /// DefaultAvatar
+    /// </summary>
+    private const string DefaultAvatar = "https://cdn-icons-png.flaticon.com/512/9187/9187604.png";
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="redisCacheProvider"></param>
@@ -106,6 +111,10 @@ internal class AuthService : IAuthService
         _ = _redisCacheProvider.SetStringAsync(sessionId, "Valid", timeSpanData.TotalSeconds);
         // Generate account response and return
         accountFind.Password = null;
+        if (string.IsNullOrEmpty(accountFind.Avatar))
+        {
+            accountFind.Avatar = DefaultAvatar;
+        }
         return GenerateAccountResponse(accountFind, account.Issuer, account.RememberMe, resourceAccess, sessionId, accountFind.Email);
     }
 
@@ -134,6 +143,11 @@ internal class AuthService : IAuthService
         var sessionId = Guid.NewGuid().ToString();
         _ = _redisCacheProvider.SetStringAsync(sessionId, "Valid", timeSpanData.TotalSeconds);
         // Generate account response and return
+        accountFind.Password = null;
+        if (string.IsNullOrEmpty(accountFind.Avatar))
+        {
+            accountFind.Avatar = DefaultAvatar;
+        }
         return GenerateAccountResponse(accountFind, payload.Issuer, false, resourceAccess, sessionId, accountFind.Email);
     }
 
@@ -170,6 +184,10 @@ internal class AuthService : IAuthService
         _ = _redisCacheProvider.SetStringAsync(sessionId, "Valid");
         // Generate account response and return
         registerAccount.Password = null;
+        if (string.IsNullOrEmpty(registerAccount.Avatar))
+        {
+            registerAccount.Avatar = DefaultAvatar;
+        }
         return GenerateAccountResponse(registerAccount, account.Issuer, true, resourceAccess, sessionId, registerAccount.Email);
     }
 
