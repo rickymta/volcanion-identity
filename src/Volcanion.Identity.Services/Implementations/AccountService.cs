@@ -1,20 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
 using Volcanion.Core.Common.Abstractions;
 using Volcanion.Core.Models.Common;
-using Volcanion.Core.Models.Enums;
 using Volcanion.Core.Models.Filter;
-using Volcanion.Core.Models.Jwt;
-using Volcanion.Core.Presentation.Middlewares.Exceptions;
 using Volcanion.Core.Services.Implementations;
 using Volcanion.Identity.Infrastructure.Abstractions;
 using Volcanion.Identity.Models.Entities;
-using Volcanion.Identity.Models.Request;
-using Volcanion.Identity.Models.Response;
-using Volcanion.Identity.Models.Setting;
 using Volcanion.Identity.Services.Abstractions;
 
 namespace Volcanion.Identity.Services.Implementations;

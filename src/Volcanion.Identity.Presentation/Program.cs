@@ -3,7 +3,6 @@ using Volcanion.Core.Common;
 using Volcanion.Core.Common.Providers;
 using Volcanion.Core.Presentation.Middlewares;
 using Volcanion.Identity.Infrastructure;
-using Volcanion.Identity.Infrastructure.Middlewares;
 using Volcanion.Identity.Handlers;
 using Volcanion.Identity.Models.Context;
 using Volcanion.Identity.Models.MappingProfiles;

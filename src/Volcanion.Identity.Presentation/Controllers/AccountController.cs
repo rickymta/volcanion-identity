@@ -57,7 +57,7 @@ public class AccountController : BaseController
     public async Task<IActionResult> CreateAsync(AccountRequestDTO request)
     {
         var account = _mapper.Map<Account>(request);
-        account.Password = _hashProvider.HashPassword(request.Password);
+        account.Password = _hashProvider.HashPassword(request.Password ?? "123456");
         var result = await _accountHandler.CreateAsync(account);
         return Ok(SuccessData(result));
     }

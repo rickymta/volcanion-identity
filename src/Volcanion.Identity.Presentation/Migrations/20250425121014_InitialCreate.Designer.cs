@@ -12,7 +12,7 @@ using Volcanion.Identity.Models.Context;
 namespace Volcanion.Identity.Presentation.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250421042702_InitialCreate")]
+    [Migration("20250425121014_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -36,6 +36,9 @@ namespace Volcanion.Identity.Presentation.Migrations
 
                     b.Property<string>("Avatar")
                         .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("Birthday")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -64,7 +67,6 @@ namespace Volcanion.Identity.Presentation.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("PhoneNumber")
@@ -170,56 +172,56 @@ namespace Volcanion.Identity.Presentation.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f68f9851-84c3-4191-8d81-01433f9c5277"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7566), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = new Guid("00551060-f0c9-49d8-971e-27f980b8801a"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9233), new TimeSpan(0, 7, 0, 0, 0)),
                             IsActived = true,
                             IsDeleted = false,
                             Name = "All"
                         },
                         new
                         {
-                            Id = new Guid("94a933de-37a9-4539-b00c-1ae7b253fcb3"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7647), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = new Guid("2aef0e2d-1bae-4761-868b-a132ba4706bf"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9236), new TimeSpan(0, 7, 0, 0, 0)),
                             IsActived = true,
                             IsDeleted = false,
                             Name = "Create"
                         },
                         new
                         {
-                            Id = new Guid("f5ce26f7-d1b4-4a5c-9f88-48c1cd025eeb"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7650), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = new Guid("69b465af-b54b-4bda-af3d-91d2fde76249"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9241), new TimeSpan(0, 7, 0, 0, 0)),
                             IsActived = true,
                             IsDeleted = false,
                             Name = "Read"
                         },
                         new
                         {
-                            Id = new Guid("e0c2db33-56cc-42d0-bb00-c42411492a4b"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7652), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = new Guid("cdbb5b03-c310-41ef-9aaa-096adb0323dd"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9243), new TimeSpan(0, 7, 0, 0, 0)),
                             IsActived = true,
                             IsDeleted = false,
                             Name = "Update"
                         },
                         new
                         {
-                            Id = new Guid("bb1be038-efdc-4089-b818-f270f749f73d"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7654), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = new Guid("6b714248-6087-4413-9211-cb50c4089650"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9244), new TimeSpan(0, 7, 0, 0, 0)),
                             IsActived = true,
                             IsDeleted = false,
                             Name = "SoftDelete"
                         },
                         new
                         {
-                            Id = new Guid("d34cf9c6-8a97-4cf5-aaf8-68c4e9949f6d"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7660), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = new Guid("a100d8d7-1cc0-4eb2-942c-ff27b934a110"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9245), new TimeSpan(0, 7, 0, 0, 0)),
                             IsActived = true,
                             IsDeleted = false,
                             Name = "HardDelete"
                         },
                         new
                         {
-                            Id = new Guid("99b51ee3-e78b-4c4d-9d24-685d193b18d9"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7672), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = new Guid("67e1636a-9864-4cb3-866e-0201835c4df0"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9247), new TimeSpan(0, 7, 0, 0, 0)),
                             IsActived = true,
                             IsDeleted = false,
                             Name = "Grant"
@@ -267,48 +269,48 @@ namespace Volcanion.Identity.Presentation.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("5143ea64-edd7-42f0-bf70-7168f93e8c97"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7338), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = new Guid("c945e0e8-c9a4-4755-bd7a-e8cbc407d5f7"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(8946), new TimeSpan(0, 7, 0, 0, 0)),
                             IsActived = true,
                             IsDeleted = false,
                             Name = "Admin"
                         },
                         new
                         {
-                            Id = new Guid("ba9b27cf-3186-4495-9a65-c2711b545634"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7374), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = new Guid("9e8a19fa-31f1-42b4-a114-067e3f29ed13"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9024), new TimeSpan(0, 7, 0, 0, 0)),
                             IsActived = true,
                             IsDeleted = false,
                             Name = "Account"
                         },
                         new
                         {
-                            Id = new Guid("b48a42ee-61ef-46fb-8e0e-9a1b5be5195f"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7376), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = new Guid("9c372f98-a485-4e24-a0d6-7977c9b13b76"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9026), new TimeSpan(0, 7, 0, 0, 0)),
                             IsActived = true,
                             IsDeleted = false,
                             Name = "Role"
                         },
                         new
                         {
-                            Id = new Guid("7747afba-eb22-4c2b-a465-937745b5953f"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7391), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = new Guid("760f1334-050c-4703-82bd-082b55acf97c"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9027), new TimeSpan(0, 7, 0, 0, 0)),
                             IsActived = true,
                             IsDeleted = false,
                             Name = "Permission"
                         },
                         new
                         {
-                            Id = new Guid("582cdad6-0e24-4cb4-8298-357084ab4b22"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7393), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = new Guid("5678ce20-9b79-465b-a52f-db25346dc2ce"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9029), new TimeSpan(0, 7, 0, 0, 0)),
                             IsActived = true,
                             IsDeleted = false,
                             Name = "RolePermission"
                         },
                         new
                         {
-                            Id = new Guid("d667e0f0-5313-46c1-ada4-a1d1bcb79d36"),
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7395), new TimeSpan(0, 7, 0, 0, 0)),
+                            Id = new Guid("df040f72-2d19-4299-9c20-62fb586a931c"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9030), new TimeSpan(0, 7, 0, 0, 0)),
                             IsActived = true,
                             IsDeleted = false,
                             Name = "GrantPermission"

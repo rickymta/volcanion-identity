@@ -25,7 +25,7 @@ namespace Volcanion.Identity.Presentation.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Email = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Password = table.Column<string>(type: "longtext", nullable: false)
+                    Password = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Avatar = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -33,6 +33,7 @@ namespace Volcanion.Identity.Presentation.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     PhoneNumber = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    Birthday = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     IsActived = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
@@ -180,13 +181,13 @@ namespace Volcanion.Identity.Presentation.Migrations
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "IsActived", "IsDeleted", "Name", "UpdatedAt", "UpdatedBy" },
                 values: new object[,]
                 {
-                    { new Guid("94a933de-37a9-4539-b00c-1ae7b253fcb3"), new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7647), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "Create", null, null },
-                    { new Guid("99b51ee3-e78b-4c4d-9d24-685d193b18d9"), new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7672), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "Grant", null, null },
-                    { new Guid("bb1be038-efdc-4089-b818-f270f749f73d"), new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7654), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "SoftDelete", null, null },
-                    { new Guid("d34cf9c6-8a97-4cf5-aaf8-68c4e9949f6d"), new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7660), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "HardDelete", null, null },
-                    { new Guid("e0c2db33-56cc-42d0-bb00-c42411492a4b"), new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7652), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "Update", null, null },
-                    { new Guid("f5ce26f7-d1b4-4a5c-9f88-48c1cd025eeb"), new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7650), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "Read", null, null },
-                    { new Guid("f68f9851-84c3-4191-8d81-01433f9c5277"), new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7566), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "All", null, null }
+                    { new Guid("00551060-f0c9-49d8-971e-27f980b8801a"), new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9233), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "All", null, null },
+                    { new Guid("2aef0e2d-1bae-4761-868b-a132ba4706bf"), new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9236), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "Create", null, null },
+                    { new Guid("67e1636a-9864-4cb3-866e-0201835c4df0"), new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9247), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "Grant", null, null },
+                    { new Guid("69b465af-b54b-4bda-af3d-91d2fde76249"), new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9241), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "Read", null, null },
+                    { new Guid("6b714248-6087-4413-9211-cb50c4089650"), new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9244), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "SoftDelete", null, null },
+                    { new Guid("a100d8d7-1cc0-4eb2-942c-ff27b934a110"), new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9245), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "HardDelete", null, null },
+                    { new Guid("cdbb5b03-c310-41ef-9aaa-096adb0323dd"), new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9243), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "Update", null, null }
                 });
 
             migrationBuilder.InsertData(
@@ -194,12 +195,12 @@ namespace Volcanion.Identity.Presentation.Migrations
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "IsActived", "IsDeleted", "Name", "UpdatedAt", "UpdatedBy" },
                 values: new object[,]
                 {
-                    { new Guid("5143ea64-edd7-42f0-bf70-7168f93e8c97"), new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7338), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "Admin", null, null },
-                    { new Guid("582cdad6-0e24-4cb4-8298-357084ab4b22"), new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7393), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "RolePermission", null, null },
-                    { new Guid("7747afba-eb22-4c2b-a465-937745b5953f"), new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7391), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "Permission", null, null },
-                    { new Guid("b48a42ee-61ef-46fb-8e0e-9a1b5be5195f"), new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7376), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "Role", null, null },
-                    { new Guid("ba9b27cf-3186-4495-9a65-c2711b545634"), new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7374), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "Account", null, null },
-                    { new Guid("d667e0f0-5313-46c1-ada4-a1d1bcb79d36"), new DateTimeOffset(new DateTime(2025, 4, 21, 11, 26, 58, 687, DateTimeKind.Unspecified).AddTicks(7395), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "GrantPermission", null, null }
+                    { new Guid("5678ce20-9b79-465b-a52f-db25346dc2ce"), new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9029), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "RolePermission", null, null },
+                    { new Guid("760f1334-050c-4703-82bd-082b55acf97c"), new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9027), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "Permission", null, null },
+                    { new Guid("9c372f98-a485-4e24-a0d6-7977c9b13b76"), new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9026), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "Role", null, null },
+                    { new Guid("9e8a19fa-31f1-42b4-a114-067e3f29ed13"), new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9024), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "Account", null, null },
+                    { new Guid("c945e0e8-c9a4-4755-bd7a-e8cbc407d5f7"), new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(8946), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "Admin", null, null },
+                    { new Guid("df040f72-2d19-4299-9c20-62fb586a931c"), new DateTimeOffset(new DateTime(2025, 4, 25, 19, 10, 13, 922, DateTimeKind.Unspecified).AddTicks(9030), new TimeSpan(0, 7, 0, 0, 0)), null, null, null, true, false, "GrantPermission", null, null }
                 });
 
             migrationBuilder.CreateIndex(

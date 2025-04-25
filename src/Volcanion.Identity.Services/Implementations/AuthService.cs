@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 using Volcanion.Core.Common.Abstractions;
-using Volcanion.Core.Common.Implementations;
 using Volcanion.Core.Models.Enums;
+using Volcanion.Core.Models.Exceptions;
 using Volcanion.Core.Models.Jwt;
-using Volcanion.Core.Presentation.Middlewares.Exceptions;
 using Volcanion.Identity.Infrastructure.Abstractions;
 using Volcanion.Identity.Models.Entities;
 using Volcanion.Identity.Models.Request;
@@ -115,7 +114,7 @@ internal class AuthService : IAuthService
         {
             accountFind.Avatar = DefaultAvatar;
         }
-        return GenerateAccountResponse(accountFind, account.Issuer, account.RememberMe, resourceAccess, sessionId, accountFind.Email);
+        return GenerateAccountResponse(accountFind, account.Issuer, account.RememberMe, resourceAccess, sessionId);
     }
 
     /// <inheritdoc />
@@ -129,7 +128,8 @@ internal class AuthService : IAuthService
         if (payload == null) return null;
 
         // Find account by email from payload
-        var accountFind = await _accountRepository.GetAccountByEmail(payload.Email);
+        var payloadAccount = (Account)payload.Data! ?? throw new Exception("Invalid payload in refresh token!");
+        var accountFind = await _accountRepository.GetAccountByEmail(payloadAccount.Email);
         // If account not found, return null
         if (accountFind == null) return null;
         var expirationTimeStr = AccessTokenExpiredTime ?? "10m";
@@ -148,7 +148,7 @@ internal class AuthService : IAuthService
         {
             accountFind.Avatar = DefaultAvatar;
         }
-        return GenerateAccountResponse(accountFind, payload.Issuer, false, resourceAccess, sessionId, accountFind.Email);
+        return GenerateAccountResponse(accountFind, payload.Issuer, false, resourceAccess, sessionId);
     }
 
     /// <inheritdoc />
@@ -188,7 +188,7 @@ internal class AuthService : IAuthService
         {
             registerAccount.Avatar = DefaultAvatar;
         }
-        return GenerateAccountResponse(registerAccount, account.Issuer, true, resourceAccess, sessionId, registerAccount.Email);
+        return GenerateAccountResponse(registerAccount, account.Issuer, true, resourceAccess, sessionId);
     }
 
     /// <summary>
@@ -199,16 +199,16 @@ internal class AuthService : IAuthService
     /// <param name="rememberMe"></param>
     /// <param name="resourceAccess"></param>
     /// <returns></returns>
-    private LoginResponse GenerateAccountResponse(object data, string issuer, bool rememberMe, ResourceAccess resourceAccess, string sessionId, string email)
+    private LoginResponse GenerateAccountResponse(object data, string issuer, bool rememberMe, ResourceAccess resourceAccess, string sessionId)
     {
         // Generate access token
         var refreshToken = "";
-        var accessToken = _jwtProvider.GenerateJwt(data, Audience, issuer, [.. AllowedOrigin], resourceAccess, JwtType.AccessToken, sessionId, email);
+        var accessToken = _jwtProvider.GenerateJwt(data, Audience, issuer, [.. AllowedOrigin], resourceAccess, JwtType.AccessToken, sessionId);
 
         // If remember me is true, generate refresh token
         if (rememberMe)
         {
-            refreshToken = _jwtProvider.GenerateJwt(data, Audience, issuer, [.. AllowedOrigin], resourceAccess, JwtType.RefreshToken, sessionId, email);
+            refreshToken = _jwtProvider.GenerateJwt(data, Audience, issuer, [.. AllowedOrigin], resourceAccess, JwtType.RefreshToken, sessionId);
         }
 
         // Return account response
